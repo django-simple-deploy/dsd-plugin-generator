@@ -35,6 +35,12 @@ Modify user's settings file:
         }
         plugin_utils.modify_settings_file(template_path, context)
 
+Add a set of requirements:
+
+    def _add_requirements(self):
+        # Add requirements for deploying to Fly.io.
+        requirements = ["gunicorn", "psycopg2-binary", "dj-database-url", "whitenoise"]
+        plugin_utils.add_packages(requirements)
 """
 
 import sys, os, re, json
