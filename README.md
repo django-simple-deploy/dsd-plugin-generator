@@ -9,4 +9,6 @@ Usage notes
 
 - Download this repo; don't clone it.
 - Run the script...
+- Most files are filled in for you based on the information you provide.
+- Fill out the messages in deploy_messages.py.
 - These notes will be deleted, and you'll be left with a working plugin that you can customize for the platform you're targeting.
