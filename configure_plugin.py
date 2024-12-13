@@ -72,9 +72,6 @@ replacements = {
     "{{AutomateAllSupported}}": automate_all
 }
 
-from pprint import pprint
-pprint(replacements)
-
 
 # --- Make replacements in file contents. ---
 
@@ -99,5 +96,13 @@ path_root = Path(__file__).parent
 
 for target_file in target_files:
     # Read file, make replacements, rewrite file.
+    msg = f"Modifying file: {target_file}"
     path = path_root / target_file
     contents = path.read_text()
+
+    for k, v in replacements.items():
+        contents = contents.replace("k", "v")
+
+    path.write_text(contents)
+
+# 
