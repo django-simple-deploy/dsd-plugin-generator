@@ -1,0 +1,9 @@
+black
+build
+Django
+pluggy
+pytest
+requests
+setuptools
+toml
+twine
