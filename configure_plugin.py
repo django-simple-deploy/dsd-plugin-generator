@@ -64,9 +64,10 @@ while True:
 print("\n\nThank you. Configuring plugin...")
 
 # Define replacements dict.
+platform_name_lower = platform_name.lower().replace("-", "").replace("_", "").replace(".", "")
 replacements = {
     "{{PlatformName}}": platform_name,
-    "{{PlatformNameLower}}": platform_name.lower().replace("-", "").replace("_", "").replace(".", ""),
+    "{{PlatformNameLower}}": platform_name_lower,
     "{{PackageName}}": pkg_name,
     "{{PluginName}}": pkg_name.replace("-", "_"),
     "{{AutomateAllSupported}}": automate_all
@@ -105,4 +106,9 @@ for target_file in target_files:
 
     path.write_text(contents)
 
-# 
+# --- Make other appropriate changes.
+
+# Rename test file.
+path_test_file = path_root / "tests" / "integration_tests" / "test_platformname_config.py"
+path_test_file_renamed = path_root / "tests" / "integration_tests" / f"test_{platform_name_lower}config.py"
+path_test_file.rename(path_test_file_renamed)
