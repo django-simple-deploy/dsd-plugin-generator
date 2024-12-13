@@ -22,17 +22,26 @@ from tests.integration_tests.conftest import (
 
 
 def test_settings(tmp_project):
-    """Verify there's a Fly.io-specific settings section.
+    """Verify there's a {{PlatformName}}-specific settings section.
     This function only checks the entire settings file. It does not examine
       individual settings.
+
+    Note: This will fail as soon as you make updates to the user's settings file.
+    That's good! Look in the test's temp dir, look at the settings file after it was
+    modified, and if it's correct, copy that file to reference_files. Tests should pass
+    again.
     """
-    hf.check_reference_file(tmp_project, "blog/settings.py", "dsd-flyio")
+    hf.check_reference_file(tmp_project, "blog/settings.py", "{{PackageName}}")
 
 
 def test_requirements_txt(tmp_project, pkg_manager):
-    """Test that the requirements.txt file is correct."""
+    """Test that the requirements.txt file is correct.
+    Note: This will fail as soon as you add new requirements. That's good! Look in the
+    test's temp dir, look at the requirements.txt file after it was modified, and if
+    it's correct, copy it to reference files. Tests should pass again.
+    """
     if pkg_manager == "req_txt":
-        hf.check_reference_file(tmp_project, "requirements.txt", "dsd-flyio")
+        hf.check_reference_file(tmp_project, "requirements.txt", "{{PackageName}}")
     elif pkg_manager in ["poetry", "pipenv"]:
         assert not Path("requirements.txt").exists()
 
@@ -42,7 +51,7 @@ def test_pyproject_toml(tmp_project, pkg_manager):
     if pkg_manager in ("req_txt", "pipenv"):
         assert not Path("pyproject.toml").exists()
     elif pkg_manager == "poetry":
-        hf.check_reference_file(tmp_project, "pyproject.toml", "dsd-flyio")
+        hf.check_reference_file(tmp_project, "pyproject.toml", "{{PackageName}}")
 
 
 def test_pipfile(tmp_project, pkg_manager):
@@ -50,54 +59,35 @@ def test_pipfile(tmp_project, pkg_manager):
     if pkg_manager in ("req_txt", "poetry"):
         assert not Path("Pipfile").exists()
     elif pkg_manager == "pipenv":
-        hf.check_reference_file(tmp_project, "Pipfile", "dsd-flyio")
+        hf.check_reference_file(tmp_project, "Pipfile", "{{PackageName}}")
 
 
 def test_gitignore(tmp_project):
     """Test that .gitignore has been modified correctly."""
-    hf.check_reference_file(tmp_project, ".gitignore", "dsd-flyio")
+    hf.check_reference_file(tmp_project, ".gitignore", "{{PackageName}}")
 
 
-# --- Test Fly.io-specific files ---
+# --- Test {{PlatformName}}-specific files ---
 
-
-def test_creates_fly_toml_file(tmp_project, pkg_manager):
-    """Verify that fly.toml is created correctly."""
-    if pkg_manager in ("req_txt", "poetry"):
-        hf.check_reference_file(tmp_project, "fly.toml", "dsd-flyio")
-    elif pkg_manager == "pipenv":
-        hf.check_reference_file(
-            tmp_project, "fly.toml", "dsd-flyio", reference_filename="pipenv.fly.toml"
-        )
-
-
-def test_creates_dockerfile(tmp_project, pkg_manager):
-    """Verify that dockerfile is created correctly."""
-    if pkg_manager == "req_txt":
-        hf.check_reference_file(tmp_project, "dockerfile", "dsd-flyio")
-    elif pkg_manager == "poetry":
-        hf.check_reference_file(
-            tmp_project,
-            "dockerfile",
-            "dsd-flyio",
-            reference_filename="poetry.dockerfile",
-        )
-    elif pkg_manager == "pipenv":
-        hf.check_reference_file(
-            tmp_project,
-            "dockerfile",
-            "dsd-flyio",
-            reference_filename="pipenv.dockerfile",
-        )
-
-
-def test_creates_dockerignore_file(tmp_project):
-    """Verify that dockerignore file is created correctly."""
-    if sys.platform == "win32":
-        reference_file = ".dockerignore-windows"
-    else:
-        reference_file = ".dockerignore"
-    hf.check_reference_file(tmp_project, ".dockerignore", "dsd-flyio", reference_file)
+# Example test for a platform-specicific file such as Fly's Dockerfile
+# def test_creates_dockerfile(tmp_project, pkg_manager):
+#     """Verify that dockerfile is created correctly."""
+#     if pkg_manager == "req_txt":
+#         hf.check_reference_file(tmp_project, "dockerfile", "dsd-flyio")
+#     elif pkg_manager == "poetry":
+#         hf.check_reference_file(
+#             tmp_project,
+#             "dockerfile",
+#             "dsd-flyio",
+#             reference_filename="poetry.dockerfile",
+#         )
+#     elif pkg_manager == "pipenv":
+#         hf.check_reference_file(
+#             tmp_project,
+#             "dockerfile",
+#             "dsd-flyio",
+#             reference_filename="pipenv.dockerfile",
+#         )
 
 
 # --- Test logs ---
@@ -108,15 +98,13 @@ def test_log_dir(tmp_project):
     log_path = Path(tmp_project / "simple_deploy_logs")
     assert log_path.exists()
 
-    # DEV: After implementing friendly summary for Platform.sh, this file
-    #   will need to be updated.
     # There should be exactly two log files.
     log_files = sorted(log_path.glob("*"))
     log_filenames = [lf.name for lf in log_files]
     # Check for exactly the log files we expect to find.
-    # assert 'deployment_summary.html' in log_filenames
-    # DEV: Add a regex text for a file like "simple_deploy_2022-07-09174245.log".
-    assert len(log_files) == 1  # update on friendly summary
+    # DEV: Currently just testing that a log file exists. Add a regex text for a file
+    # like "simple_deploy_2022-07-09174245.log".
+    assert len(log_files) == 1
 
     # Read log file. We can never just examine the log file directly to a reference,
     #   because it will have different timestamps.
@@ -129,21 +117,21 @@ def test_log_dir(tmp_project):
     # DEV: Update these for more platform-specific log messages.
     # Spot check for opening log messages.
     assert "INFO: Logging run of `manage.py deploy`..." in log_file_text
-    assert "INFO: Configuring project for deployment to Fly.io..." in log_file_text
+    assert "INFO: Configuring project for deployment to {{PlatformName}}..." in log_file_text
 
     assert "INFO: CLI args:" in log_file_text
     assert (
-        "INFO: Deployment target: fly_io" in log_file_text
-        or "INFO: Deployment target: flyio" in log_file_text
+        "INFO: Deployment target: {{PlatformName}}" in log_file_text
+        or "INFO: Deployment target: {{PlatformName}}" in log_file_text
     )
-    assert "INFO:   Using plugin: dsd_flyio" in log_file_text
+    assert "INFO:   Using plugin: {{PluginName}}" in log_file_text
     assert "INFO: Local project name: blog" in log_file_text
     assert "INFO: git status --porcelain" in log_file_text
     assert "INFO: ?? simple_deploy_logs/" in log_file_text
 
     # Spot check for success messages.
     assert (
-        "INFO: --- Your project is now configured for deployment on Fly.io ---"
+        "INFO: --- Your project is now configured for deployment on {{PlatformName}} ---"
         in log_file_text
     )
     assert "INFO: To deploy your project, you will need to:" in log_file_text
