@@ -15,7 +15,7 @@ Add a new file to the user's project, using a template:
 
     def _add_dockerfile(self):
         # Add a minimal dockerfile.
-        template_path = self.templates_path / "dockerfile"
+        template_path = self.templates_path / "dockerfile_example"
         context = {
             "django_project_name": sd_config.local_project_name,
         }
