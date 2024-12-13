@@ -24,6 +24,60 @@ $ grep -Rl {{ .
 
 from pathlib import Path
 
+
+# --- Prompt for plugin info. ---
+
+while True:
+    msg = "What platform are you targeting? (Example: Fly.io) "
+    platform_name = input(msg)
+
+    msg = "What's the name of your plugin package? (Example: dsd-flyio) "
+    while True:
+        pkg_name = input(msg)
+        if pkg_name.startswith("dsd-"):
+            break
+        else:
+            print("The package name must start with `dsd-`.")
+
+    msg = "Will your plugin support the --automate-all CLI arg? (yes/no) "
+    response = input(msg)
+    if response.lower() in ("yes", "y"):
+        automate_all = True
+    else:
+        automate_all = False
+
+    # Review responses.
+    msg = "\nHere's the information you've provided:"
+    print(msg)
+    print(f"  Platform name: {platform_name}")
+    print(f"  Package name: {pkg_name}")
+    print(f"  Supports --automate-all: {automate_all}")
+
+    msg = "\nIs this information correct? (yes/no) "
+    response = input(msg)
+    if response.lower() in ("yes", "y"):
+        break
+
+    msg = "Sorry, please try again.\n\n"
+    print(msg)
+
+print("\n\nThank you. Configuring plugin...")
+
+# Define replacements dict.
+replacements = {
+    "{{PlatformName}}": platform_name,
+    "{{PlatformNameLower}}": platform_name.lower().replace("-", "").replace("_", "").replace(".", ""),
+    "{{PackageName}}": pkg_name,
+    "{{PluginName}}": pkg_name.replace("-", "_"),
+    "{{AutomateAllSupported}}": automate_all
+}
+
+from pprint import pprint
+pprint(replacements)
+
+
+# --- Make replacements in file contents. ---
+
 # Files that need to be parsed.
 target_files = [
     "pyproject.toml",
