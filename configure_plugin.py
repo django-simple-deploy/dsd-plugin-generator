@@ -23,6 +23,10 @@ $ grep -Rl {{ .
 """
 
 from pathlib import Path
+import platform
+import subprocess
+import time
+import shlex
 
 
 # --- Prompt for plugin info. ---
@@ -61,7 +65,7 @@ while True:
     msg = "Sorry, please try again.\n\n"
     print(msg)
 
-print("\n\nThank you. Configuring plugin...")
+print("\n\nThank you. Configuring plugin...\n")
 
 # Define replacements dict.
 platform_name_lower = platform_name.lower().replace("-", "").replace("_", "").replace(".", "")
@@ -70,7 +74,7 @@ replacements = {
     "{{PlatformNameLower}}": platform_name_lower,
     "{{PackageName}}": pkg_name,
     "{{PluginName}}": pkg_name.replace("-", "_"),
-    "{{AutomateAllSupported}}": automate_all
+    "{{AutomateAllSupported}}": str(automate_all),
 }
 
 
@@ -80,7 +84,7 @@ replacements = {
 target_files = [
     "pyproject.toml",
     "tests/conftest.py",
-    "tests/integration_tests/test_flyio_config.py",
+    "tests/integration_tests/test_platformname_config.py",
     "tests/e2e_tests/utils.py",
     "tests/e2e_tests/test_deployment.py",
     "MANIFEST.in",
@@ -96,22 +100,25 @@ target_files = [
 path_root = Path(__file__).parent
 
 for target_file in target_files:
-    # Read file, make replacements, rewrite file.
     msg = f"Modifying file: {target_file}"
+    print(msg)
+
+    # Read file.
     path = path_root / target_file
     contents = path.read_text()
 
+    # Modify contents and write file.
     for k, v in replacements.items():
-        contents = contents.replace("k", "v")
-
+        contents = contents.replace(k, v)
     path.write_text(contents)
+
 
 # --- Make other appropriate changes.
 
 # Rename test file.
-print("Renaming integration test file...")
+print("\nRenaming integration test file...")
 path_test_file = path_root / "tests" / "integration_tests" / "test_platformname_config.py"
-path_test_file_renamed = path_root / "tests" / "integration_tests" / f"test_{platform_name_lower}config.py"
+path_test_file_renamed = path_root / "tests" / "integration_tests" / f"test_{platform_name_lower}_config.py"
 path_test_file.rename(path_test_file_renamed)
 
 # Remove automate_all support if needed.
@@ -145,7 +152,7 @@ path.write_text(contents)
 # Rename repo dir.
 print("Modifying parent directory...")
 repo_name = path_root.name
-path_root_new = Path(__file__).parent.parent / f"pkg_name"
+path_root_new = Path(__file__).parent.parent / pkg_name
 path_root.rename(path_root_new)
 
 # Delete this file.
@@ -154,5 +161,14 @@ path = path_root_new / "configure_plugin.py"
 path.unlink()
 
 msg = "\nFinished setting up your plugin. If there are any issues,"
-msg += "please download a fresh copy of the repo and try again."
+msg += "\nplease download a fresh copy of the repo and try again."
+print(msg)
+
+msg = f"\nYou'll probably need to `cd ..` and then `cd {pkg_name}` to see"
+msg += "\nthe new name of this directory."
+print(msg)
+
+msg = "\nYou should now be able to make an editable install of this project into"
+msg += "\na development version of django-simple-deploy, and run a small set of"
+msg += "\ninitial tests."
 print(msg)
