@@ -78,17 +78,16 @@ if path_root_new.exists():
     sys.exit(msg)
 
 while True:
-    msg = f"Okay to write new project at {path_root_new.as_posix()}? (yes/no) "
+    msg = f"\nOkay to write new project at {path_root_new.as_posix()}? (yes/no) "
     response = input(msg)
-    if reponse.lower() in ("yes", "y"):
+    if response.lower() in ("yes", "y"):
         break
     if response.lower() in ("no", "n"):
-        msg = "Okay, feel free to copy this project to a different location and try again."
+        msg = "\nOkay, feel free to copy this project to a different location and try again."
         msg += "\n  The new repo will be written alongside this project."
         sys.exit(msg)
 
 print("\n\nThank you. Configuring plugin...\n")
-sys.exit("diagnostic exit")
 
 # Define replacements dict.
 platform_name_lower = platform_name.lower().replace("-", "").replace("_", "").replace(".", "")
