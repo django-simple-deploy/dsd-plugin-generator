@@ -87,7 +87,7 @@ while True:
         msg += "\n  The new repo will be written alongside this project."
         sys.exit(msg)
 
-print("\n\nThank you. Configuring plugin...\n")
+print("\n\nThank you. Configuring plugin...")
 
 # Define replacements dict.
 platform_name_lower = platform_name.lower().replace("-", "").replace("_", "").replace(".", "")
@@ -100,6 +100,37 @@ replacements = {
 }
 
 
+# --- Build out directory structure ---
+
+# Make new plugin dir, and required directory structure.
+print(f"\nMaking new directory: {path_root_new.as_posix()}")
+path_root_new.mkdir()
+
+print("Building inner directory structure...")
+
+# Using mkdir(parents=True), only need to make most deeply nested dirs.
+new_dirs = [
+    "developer_resources",
+    f"dsd_{platform_name_lower}/templates",
+    "tests/integration_tests/reference_files",
+    "tests/e2e_tests",
+]
+
+for new_dir in new_dirs:
+    path_new_dir = path_root_new / new_dir
+    print(f"Making new directory: {path_new_dir.as_posix()}")
+    path_new_dir.mkdir(parents=True)
+
+
+# --- Copy files that don't need modification. ---
+
+print(f"Copying files:")
+target_files = [
+    ".gitignore",
+
+]
+
+sys.exit()
 # --- Make replacements in file contents. ---
 
 # Files that need to be parsed.
@@ -111,6 +142,7 @@ target_files = [
     "tests/e2e_tests/test_deployment.py",
     "MANIFEST.in",
     "README.md",
+    "CHANGELOG.md"
     "dsd_platformname/platform_deployer.py",
     "dsd_platformname/deploy.py",
     "dsd_platformname/plugin_config.py",
@@ -130,6 +162,8 @@ for target_file in target_files:
     # Modify contents and write file.
     for k, v in replacements.items():
         contents = contents.replace(k, v)
+    # DEV: Here
+    # path_new = path_root_new / 
     path.write_text(contents)
 
 
