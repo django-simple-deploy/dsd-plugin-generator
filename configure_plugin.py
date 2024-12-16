@@ -27,6 +27,7 @@ import platform
 import subprocess
 import time
 import shlex
+import shutil
 import sys
 
 
@@ -51,12 +52,16 @@ while True:
     else:
         automate_all = False
 
+    msg = "What name do you want to appear in the LICENSE file? "
+    license_name = input(msg)
+
     # Review responses.
     msg = "\nHere's the information you've provided:"
     print(msg)
     print(f"  Platform name: {platform_name}")
     print(f"  Package name: {pkg_name}")
     print(f"  Supports --automate-all: {automate_all}")
+    print(f"  Name on license: {license_name}")
 
     msg = "\nIs this information correct? (yes/no) "
     response = input(msg)
@@ -97,6 +102,7 @@ replacements = {
     "{{PackageName}}": pkg_name,
     "{{PluginName}}": pkg_name.replace("-", "_"),
     "{{AutomateAllSupported}}": str(automate_all),
+    "{{LicenseName}}": license_name,
 }
 
 
@@ -118,17 +124,31 @@ new_dirs = [
 
 for new_dir in new_dirs:
     path_new_dir = path_root_new / new_dir
-    print(f"Making new directory: {path_new_dir.as_posix()}")
+    print(f"  Making new directory: {path_new_dir.as_posix()}")
     path_new_dir.mkdir(parents=True)
 
 
 # --- Copy files that don't need modification. ---
 
-print(f"Copying files:")
+print(f"\nCopying files...")
 target_files = [
     ".gitignore",
-
+    "developer_resources/README.md",
+    "dsd_platformname/__init__.py",
+    "tests/e2e_tests/__init__.py",
+    "tests/integration_tests/reference_files/.gitignore",
+    "tests/integration_tests/reference_files/Pipfile",
+    "tests/integration_tests/reference_files/pyproject.toml",
+    "tests/integration_tests/reference_files/requirements.txt",
+    "tests/integration_tests/reference_files/settings.py",
 ]
+
+for target_file in target_files:
+    print(f"  Copying file: {target_file}")
+    path_src = path_root / target_file
+    target_file_new = target_file.replace("dsd_platformname", f"dsd_{platform_name_lower}")
+    path_dest = path_root_new / target_file_new
+    shutil.copy(path_src, path_dest)
 
 sys.exit()
 # --- Make replacements in file contents. ---
@@ -143,6 +163,7 @@ target_files = [
     "MANIFEST.in",
     "README.md",
     "CHANGELOG.md"
+    "LICENSE",
     "dsd_platformname/platform_deployer.py",
     "dsd_platformname/deploy.py",
     "dsd_platformname/plugin_config.py",
