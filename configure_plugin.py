@@ -71,8 +71,10 @@ path_root = Path(__file__).parent
 path_root_new = path_root.parent / pkg_name
 
 if path_root_new.exists():
-    msg = f"A directory already exists at {path_root_new.as_posix()}."
-    msg = "\n  Please either move or rename that directory, or choose a different package name."
+    msg = "\nThe new repo needs to be written alongside this project,"
+    msg += f"\n  but a directory already exists at {path_root_new.as_posix()}."
+    msg += "\nPlease either move or rename that directory, choose a different package name,"
+    msg += "\n  or copy this project to a different location and try again."
     sys.exit(msg)
 
 while True:
