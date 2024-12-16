@@ -27,6 +27,7 @@ import platform
 import subprocess
 import time
 import shlex
+import sys
 
 
 # --- Prompt for plugin info. ---
@@ -65,7 +66,27 @@ while True:
     msg = "Sorry, please try again.\n\n"
     print(msg)
 
+# Get permission to write to target directory.
+path_root = Path(__file__).parent
+path_root_new = path_root.parent / pkg_name
+
+if path_root_new.exists():
+    msg = f"A directory already exists at {path_root_new.as_posix()}."
+    msg = "\n  Please either move or rename that directory, or choose a different package name."
+    sys.exit(msg)
+
+while True:
+    msg = f"Okay to write new project at {path_root_new.as_posix()}? (yes/no) "
+    response = input(msg)
+    if reponse.lower() in ("yes", "y"):
+        break
+    if response.lower() in ("no", "n"):
+        msg = "Okay, feel free to copy this project to a different location and try again."
+        msg += "\n  The new repo will be written alongside this project."
+        sys.exit(msg)
+
 print("\n\nThank you. Configuring plugin...\n")
+sys.exit("diagnostic exit")
 
 # Define replacements dict.
 platform_name_lower = platform_name.lower().replace("-", "").replace("_", "").replace(".", "")
@@ -96,8 +117,6 @@ target_files = [
     "dsd_platformname/templates/settings.py",
     "dsd_platformname/deploy_messages.py",
 ]
-
-path_root = Path(__file__).parent
 
 for target_file in target_files:
     msg = f"Modifying file: {target_file}"
