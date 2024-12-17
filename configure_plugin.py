@@ -181,26 +181,20 @@ for target_file in target_files:
     for k, v in replacements.items():
         contents = contents.replace(k, v)
 
-    target_file_new = target_file.replace("dsd_platformname", f"dsd_{platform_name_lower}")
+    target_file_new = target_file.replace("platformname", f"{platform_name_lower}")
     path_new = path_root_new / target_file_new
     path_new.write_text(contents)
 
     msg = f"  Wrote modified file: {target_file_new}"
     print(msg)
 
-sys.exit()
-# --- Make other appropriate changes.
 
-# Rename test file.
-print("\nRenaming integration test file...")
-path_test_file = path_root / "tests" / "integration_tests" / "test_platformname_config.py"
-path_test_file_renamed = path_root / "tests" / "integration_tests" / f"test_{platform_name_lower}_config.py"
-# path_test_file.rename(path_test_file_renamed)
+# --- Make other changes.
 
 # Remove automate_all support if needed.
 if not automate_all:
     print("Commenting out support for --automate-all...")
-    path = path_root / "dsd_platformname" / "deploy_messages.py"
+    path = path_root_new / f"dsd_{platform_name_lower}" / "deploy_messages.py"
     lines = path.read_text().splitlines()
     new_lines = []
     for line_num, line in enumerate(lines):
@@ -210,41 +204,22 @@ if not automate_all:
             new_lines.append(line)
 
     new_contents = "\n".join(new_lines)
-    # path.write_text(new_contents)
-
-# Rename dsd_platformname dir.
-print("Renaming main plugin directory...")
-path_dsd_dir = path_root / "dsd_platformname"
-path_dsd_dir_new = path_root / f"dsd_{platform_name_lower}"
-# path_dsd_dir.rename(path_dsd_dir_new)
+    path.write_text(new_contents)
 
 # Remove unneeded lines from README.
 print("Modifying README...")
-path = path_root / "README.md"
+path = path_root_new / "README.md"
 lines = path.read_text().splitlines()[:4]
 contents = "\n".join(lines)
-# path.write_text(contents)
-
-# Rename repo dir.
-print("Modifying parent directory...")
-repo_name = path_root.name
-path_root_new = Path(__file__).parent.parent / pkg_name
-# path_root.rename(path_root_new)
-
-# Delete this file.
-print("Deleting this configuration script...")
-path = path_root_new / "configure_plugin.py"
-# path.unlink()
+path.write_text(contents)
 
 msg = "\nFinished setting up your plugin. If there are any issues,"
-msg += "\nplease download a fresh copy of the repo and try again."
-print(msg)
-
-msg = f"\nYou'll probably need to `cd ..` and then `cd {pkg_name}` to see"
-msg += "\nthe new name of this directory."
+msg += "\nplease delete the new plugin and try again, or make manual changes"
+msg += "\nand file an issue on this project's repo:"
+msg += "\n  https://github.com/django-simple-deploy/dsd-plugin-template/issues"
 print(msg)
 
 msg = "\nYou should now be able to make an editable install of this project into"
-msg += "\na development version of django-simple-deploy, and run a small set of"
-msg += "\ninitial tests."
+msg += "\na development version of django-simple-deploy, and all initial tests"
+msg += "\nshould pass."
 print(msg)
