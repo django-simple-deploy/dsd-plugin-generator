@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "{{PackageName}}"
-version = "0.9.2"
+version = "0.1.0"
 description = "A plugin for django-simple-deploy, supporting deployments to {{PlatformName}}."
 readme = "README.md"
 
