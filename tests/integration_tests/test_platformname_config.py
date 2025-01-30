@@ -113,7 +113,7 @@ def test_gitignore(tmp_project):
 
 def test_log_dir(tmp_project):
     """Test that the log directory exists, and contains an appropriate log file."""
-    log_path = Path(tmp_project / "simple_deploy_logs")
+    log_path = Path(tmp_project / "dsd_logs")
     assert log_path.exists()
 
     # There should be exactly two log files.
@@ -145,7 +145,7 @@ def test_log_dir(tmp_project):
     assert "INFO:   Using plugin: {{PluginName}}" in log_file_text
     assert "INFO: Local project name: blog" in log_file_text
     assert "INFO: git status --porcelain" in log_file_text
-    assert "INFO: ?? simple_deploy_logs/" in log_file_text
+    assert "INFO: ?? dsd_logs/" in log_file_text
 
     # Spot check for success messages.
     assert (
@@ -155,6 +155,6 @@ def test_log_dir(tmp_project):
     assert "INFO: To deploy your project, you will need to:" in log_file_text
 
     assert (
-        "INFO: - You can find a full record of this configuration in the simple_deploy_logs directory."
+        "INFO: - You can find a full record of this configuration in the dsd_logs directory."
         in log_file_text
     )
