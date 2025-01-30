@@ -35,7 +35,7 @@ def test_settings(tmp_project):
     hf.check_reference_file(tmp_project, "blog/settings.py", "{{PackageName}}")
 
 
-def test_requirements_txt(tmp_project, pkg_manager):
+def test_requirements_txt(tmp_project, pkg_manager, tmp_path, dsd_version):
     """Test that the requirements.txt file is correct.
     Note: This will fail as soon as you add new requirements. That's good! Look in the
     test's temp dir, look at the requirements.txt file after it was modified, and if
@@ -54,7 +54,7 @@ def test_requirements_txt(tmp_project, pkg_manager):
         assert not Path("requirements.txt").exists()
 
 
-def test_pyproject_toml(tmp_project, pkg_manager):
+def test_pyproject_toml(tmp_project, pkg_manager, tmp_path, dsd_version):
     """Test that pyproject.toml is correct."""
     if pkg_manager in ("req_txt", "pipenv"):
         assert not Path("pyproject.toml").exists()
@@ -69,7 +69,7 @@ def test_pyproject_toml(tmp_project, pkg_manager):
         )
 
 
-def test_pipfile(tmp_project, pkg_manager):
+def test_pipfile(tmp_project, pkg_manager, tmp_path, dsd_version):
     """Test that Pipfile is correct."""
     if pkg_manager in ("req_txt", "poetry"):
         assert not Path("Pipfile").exists()
