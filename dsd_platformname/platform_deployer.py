@@ -7,7 +7,7 @@ Add a new file to the user's project, without using a template:
 
     def _add_dockerignore(self):
         # Add a dockerignore file, based on user's local project environmnet.
-        path = sd_config.project_root / ".dockerignore"
+        path = dsd_config.project_root / ".dockerignore"
         dockerignore_str = self._build_dockerignore()
         plugin_utils.add_file(path, dockerignore_str)
 
@@ -17,12 +17,12 @@ Add a new file to the user's project, using a template:
         # Add a minimal dockerfile.
         template_path = self.templates_path / "dockerfile_example"
         context = {
-            "django_project_name": sd_config.local_project_name,
+            "django_project_name": dsd_config.local_project_name,
         }
         contents = plugin_utils.get_template_string(template_path, context)
 
         # Write file to project.
-        path = sd_config.project_root / "Dockerfile"
+        path = dsd_config.project_root / "Dockerfile"
         plugin_utils.add_file(path, contents)
 
 Modify user's settings file:
@@ -52,9 +52,9 @@ import requests
 
 from . import deploy_messages as platform_msgs
 
-from simple_deploy.management.commands.utils import plugin_utils
-from simple_deploy.management.commands.utils.plugin_utils import sd_config
-from simple_deploy.management.commands.utils.command_errors import SimpleDeployCommandError
+from django_simple_deploy.management.commands.utils import plugin_utils
+from django_simple_deploy.management.commands.utils.plugin_utils import dsd_config
+from django_simple_deploy.management.commands.utils.command_errors import DSDCommandError
 
 
 class PlatformDeployer:
@@ -89,7 +89,7 @@ class PlatformDeployer:
         Returns:
             None
         Raises:
-            SimpleDeployCommandError: If we find any reason deployment won't work.
+            DSDCommandError: If we find any reason deployment won't work.
         """
         pass
 
@@ -106,7 +106,7 @@ class PlatformDeployer:
         - ...
         """
         # Making this check here lets deploy() be cleaner.
-        if not sd_config.automate_all:
+        if not dsd_config.automate_all:
             return
 
         plugin_utils.commit_changes()
@@ -122,8 +122,8 @@ class PlatformDeployer:
 
         Describe ongoing approach of commit, push, migrate.
         """
-        if sd_config.automate_all:
+        if dsd_config.automate_all:
             msg = platform_msgs.success_msg_automate_all(self.deployed_url)
         else:
-            msg = platform_msgs.success_msg(log_output=sd_config.log_output)
+            msg = platform_msgs.success_msg(log_output=dsd_config.log_output)
         plugin_utils.write_output(msg)
