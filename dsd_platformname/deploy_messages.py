@@ -8,7 +8,7 @@ from django.conf import settings
 
 
 confirm_automate_all = """
-The --automate-all flag means simple_deploy will:
+The --automate-all flag means django-simple-deploy will:
 - ...
 - Commit all changes to your project that are necessary for deployment.
 - Push these changes to {{PlatformName}}.
@@ -68,7 +68,7 @@ def success_msg(log_output=""):
     if log_output:
         msg += dedent(
             f"""
-        - You can find a full record of this configuration in the simple_deploy_logs directory.
+        - You can find a full record of this configuration in the dsd_logs directory.
         """
         )
 

@@ -7,7 +7,7 @@ name = "pypi"
 django = "*"
 django-bootstrap5 = "*"
 requests = "*"
-django-simple-deploy = "*"
+django-simple-deploy = "=={current-version}"
 
 [dev-packages]
 

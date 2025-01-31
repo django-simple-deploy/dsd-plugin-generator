@@ -9,9 +9,10 @@ import pytest
 from tests.integration_tests.utils import it_helper_functions as hf
 from tests.integration_tests.conftest import (
     tmp_project,
-    run_simple_deploy,
+    run_dsd,
     reset_test_project,
     pkg_manager,
+    dsd_version,
 )
 
 
@@ -34,32 +35,49 @@ def test_settings(tmp_project):
     hf.check_reference_file(tmp_project, "blog/settings.py", "{{PackageName}}")
 
 
-def test_requirements_txt(tmp_project, pkg_manager):
+def test_requirements_txt(tmp_project, pkg_manager, tmp_path, dsd_version):
     """Test that the requirements.txt file is correct.
     Note: This will fail as soon as you add new requirements. That's good! Look in the
     test's temp dir, look at the requirements.txt file after it was modified, and if
     it's correct, copy it to reference files. Tests should pass again.
     """
     if pkg_manager == "req_txt":
-        hf.check_reference_file(tmp_project, "requirements.txt", "{{PackageName}}")
+        context = {"current-version": dsd_version}
+        hf.check_reference_file(
+            tmp_project,
+            "requirements.txt",
+            "{{PackageName}}",
+            context=context,
+            tmp_path=tmp_path,
+        )
     elif pkg_manager in ["poetry", "pipenv"]:
         assert not Path("requirements.txt").exists()
 
 
-def test_pyproject_toml(tmp_project, pkg_manager):
+def test_pyproject_toml(tmp_project, pkg_manager, tmp_path, dsd_version):
     """Test that pyproject.toml is correct."""
     if pkg_manager in ("req_txt", "pipenv"):
         assert not Path("pyproject.toml").exists()
     elif pkg_manager == "poetry":
-        hf.check_reference_file(tmp_project, "pyproject.toml", "{{PackageName}}")
+        context = {"current-version": dsd_version}
+        hf.check_reference_file(
+            tmp_project,
+            "pyproject.toml",
+            "{{PackageName}}",
+            context=context,
+            tmp_path=tmp_path,
+        )
 
 
-def test_pipfile(tmp_project, pkg_manager):
+def test_pipfile(tmp_project, pkg_manager, tmp_path, dsd_version):
     """Test that Pipfile is correct."""
     if pkg_manager in ("req_txt", "poetry"):
         assert not Path("Pipfile").exists()
     elif pkg_manager == "pipenv":
-        hf.check_reference_file(tmp_project, "Pipfile", "{{PackageName}}")
+        context = {"current-version": dsd_version}
+        hf.check_reference_file(
+            tmp_project, "Pipfile", "{{PackageName}}", context=context, tmp_path=tmp_path
+        )
 
 
 def test_gitignore(tmp_project):
@@ -95,7 +113,7 @@ def test_gitignore(tmp_project):
 
 def test_log_dir(tmp_project):
     """Test that the log directory exists, and contains an appropriate log file."""
-    log_path = Path(tmp_project / "simple_deploy_logs")
+    log_path = Path(tmp_project / "dsd_logs")
     assert log_path.exists()
 
     # There should be exactly two log files.
@@ -127,7 +145,7 @@ def test_log_dir(tmp_project):
     assert "INFO:   Using plugin: {{PluginName}}" in log_file_text
     assert "INFO: Local project name: blog" in log_file_text
     assert "INFO: git status --porcelain" in log_file_text
-    assert "INFO: ?? simple_deploy_logs/" in log_file_text
+    assert "INFO: ?? dsd_logs/" in log_file_text
 
     # Spot check for success messages.
     assert (
@@ -137,6 +155,6 @@ def test_log_dir(tmp_project):
     assert "INFO: To deploy your project, you will need to:" in log_file_text
 
     assert (
-        "INFO: - You can find a full record of this configuration in the simple_deploy_logs directory."
+        "INFO: - You can find a full record of this configuration in the dsd_logs directory."
         in log_file_text
     )
