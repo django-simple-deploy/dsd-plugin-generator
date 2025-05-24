@@ -22,6 +22,9 @@ $ grep -Rl {{ .
 ./dsd_platformname/deploy_messages.py
 """
 
+from utils import generator_utils
+from utils.plugin_config import PluginConfig
+
 from pathlib import Path
 import platform
 import subprocess
@@ -31,16 +34,18 @@ import shutil
 import sys
 
 
+plugin_config = PluginConfig
+
 # --- Prompt for plugin info. ---
 
 while True:
     msg = "What platform are you targeting? (Example: Fly.io) "
-    platform_name = input(msg)
+    plugin_config.platform_name = input(msg)
 
     msg = "What's the name of your plugin package? (Example: dsd-flyio) "
     while True:
-        pkg_name = input(msg)
-        if pkg_name.startswith("dsd-"):
+        plugin_config.pkg_name = input(msg)
+        if plugin_config.pkg_name.startswith("dsd-"):
             break
         else:
             print("The package name must start with `dsd-`.")
@@ -48,20 +53,20 @@ while True:
     msg = "Will your plugin support the --automate-all CLI arg? (yes/no) "
     response = input(msg)
     if response.lower() in ("yes", "y"):
-        automate_all = True
+        plugin_config.support_automate_all = True
     else:
-        automate_all = False
+        plugin_config.support_automate_all = False
 
     msg = "What name do you want to appear in the LICENSE file? "
-    license_name = input(msg)
+    plugin_config.license_name = input(msg)
 
     # Review responses.
     msg = "\nHere's the information you've provided:"
     print(msg)
-    print(f"  Platform name: {platform_name}")
-    print(f"  Package name: {pkg_name}")
-    print(f"  Supports --automate-all: {automate_all}")
-    print(f"  Name on license: {license_name}")
+    print(f"  Platform name: {plugin_config.platform_name}")
+    print(f"  Package name: {plugin_config.pkg_name}")
+    print(f"  Supports --automate-all: {plugin_config.support_automate_all}")
+    print(f"  Name on license: {plugin_config.license_name}")
 
     msg = "\nIs this information correct? (yes/no) "
     response = input(msg)
@@ -73,7 +78,7 @@ while True:
 
 # Get permission to write to target directory.
 path_root = Path(__file__).parent
-path_root_new = path_root.parent / pkg_name
+path_root_new = path_root.parent / plugin_config.pkg_name
 
 if path_root_new.exists():
     msg = "\nThe new repo needs to be written alongside this project,"
@@ -95,14 +100,14 @@ while True:
 print("\n\nThank you. Configuring plugin...")
 
 # Define replacements dict.
-platform_name_lower = platform_name.lower().replace("-", "").replace("_", "").replace(".", "")
+platform_name_lower = plugin_config.platform_name.lower().replace("-", "").replace("_", "").replace(".", "")
 replacements = {
-    "{{PlatformName}}": platform_name,
+    "{{PlatformName}}": plugin_config.platform_name,
     "{{PlatformNameLower}}": platform_name_lower,
-    "{{PackageName}}": pkg_name,
-    "{{PluginName}}": pkg_name.replace("-", "_"),
-    "{{AutomateAllSupported}}": str(automate_all),
-    "{{LicenseName}}": license_name,
+    "{{PackageName}}": plugin_config.pkg_name,
+    "{{PluginName}}": plugin_config.pkg_name.replace("-", "_"),
+    "{{AutomateAllSupported}}": str(plugin_config.support_automate_all),
+    "{{LicenseName}}": plugin_config.license_name,
 }
 
 
@@ -192,7 +197,7 @@ for target_file in target_files:
 # --- Make other changes.
 
 # Remove automate_all support if needed.
-if not automate_all:
+if not plugin_config.support_automate_all:
     print("Commenting out support for --automate-all...")
     path = path_root_new / f"dsd_{platform_name_lower}" / "deploy_messages.py"
     lines = path.read_text().splitlines()
