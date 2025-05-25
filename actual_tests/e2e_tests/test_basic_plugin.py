@@ -11,6 +11,7 @@ from argparse import Namespace
 from pathlib import Path
 import subprocess
 import shlex
+import re
 
 import pytest
 
@@ -74,4 +75,15 @@ def test_new_plugin_e2e(tmp_path_factory):
     cmd_parts = shlex.split(cmd)
     output = subprocess.run(cmd_parts, capture_output=True)
     stdout = output.stdout.decode()
-    breakpoint()
+
+    assert "test session starts" in stdout
+    assert "[100%]" in stdout
+
+    # Check number of core tests that passed and skipped.
+    re_passed_skipped = r"""(\d*) passed, (\d*) skipped"""
+    m = re.findall(re_passed_skipped, stdout)
+    if m:
+        passed = int(m[0][0])
+        skipped = int(m[0][1])
+        assert passed >= 31
+        assert skipped >= 22
