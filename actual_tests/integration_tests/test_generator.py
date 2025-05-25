@@ -12,7 +12,7 @@ import generate_plugin as gp
 
 
 def test_no_spaces_anywhere(tmp_path_factory):
-    tmp_path = tmp_path_factory.mktemp("sample_plugin")
+    tmp_path = tmp_path_factory.mktemp("sample_plugin_no_space")
     print(f"\nWriting plugin to: {tmp_path.as_posix()}")
 
     plugin_config = PluginConfig(
@@ -25,14 +25,14 @@ def test_no_spaces_anywhere(tmp_path_factory):
     args = Namespace(target_dir=tmp_path)
     gp.generate_plugin(plugin_config, args)
 
-    path_ref_dir = Path(__file__).parent / "reference_files" / "dsd-newfly"
+    path_ref_dir = Path(__file__).parent / "reference_files" / "dsd-newfly-no-space"
     path_test_plugin = tmp_path / "dsd-newfly"
 
     dc = dircmp(path_test_plugin, path_ref_dir, ignore=[".DS_Store", "__pycache__"])
     assert_dirs_match(dc)
 
 def test_single_space_platform_name(tmp_path_factory):
-    tmp_path = tmp_path_factory.mktemp("sample_plugin")
+    tmp_path = tmp_path_factory.mktemp("sample_plugin_one_space")
     print(f"\nWriting plugin to: {tmp_path.as_posix()}")
 
     plugin_config = PluginConfig(

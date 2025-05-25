@@ -39,3 +39,7 @@ def get_plugin_info(plugin_config):
 
         msg = "Sorry, please try again.\n\n"
         print(msg)
+
+def get_platform_name_lower(platform_name):
+    """Return a lowercase version of the platform name."""
+    return platform_name.lower().replace("-", "").replace("_", "").replace(".", "").replace(" ", "")

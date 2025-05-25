@@ -85,7 +85,9 @@ def generate_plugin(plugin_config, args):
     print("\n\nThank you. Configuring plugin...")
 
     # Define replacements dict.
-    platform_name_lower = plugin_config.platform_name.lower().replace("-", "").replace("_", "").replace(".", "")
+    # platform_name_lower = plugin_config.platform_name.lower().replace("-", "").replace("_", "").replace(".", "")
+    platform_name_lower = generator_utils.get_platform_name_lower(plugin_config.platform_name)
+
     replacements = {
         "{{PlatformName}}": plugin_config.platform_name,
         "{{PlatformNameLower}}": platform_name_lower,
