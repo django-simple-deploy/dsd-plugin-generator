@@ -69,7 +69,6 @@ def test_new_plugin_e2e(tmp_path_factory):
     path_dsd = tmp_path / "django-simple-deploy"
     cmd = f"git clone https://github.com/django-simple-deploy/django-simple-deploy.git {path_dsd.as_posix()}"
     cmd_parts = shlex.split(cmd)
-    # breakpoint()
     subprocess.run(cmd_parts)
 
     # Build a venv in the django-simple-deploy temp dir.
@@ -112,9 +111,7 @@ def test_new_plugin_e2e(tmp_path_factory):
     if run_core_plugin_tests:
         # Run core tests **with** the new plugin installed.
         tests_dir = path_dsd / "tests"
-        # cmd = f"{path_to_python} -m pytest {tests_dir.as_posix()}"
         cmd = f"cd {path_dsd.as_posix()} && source .venv/bin/activate && pytest"
-        # cmd_parts = shlex.split(cmd)
         output = subprocess.run(cmd, capture_output=True,shell=True)
         stdout = output.stdout.decode()
 
