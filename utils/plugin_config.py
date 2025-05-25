@@ -8,4 +8,4 @@ class PluginConfig:
     platform_name: str = ""
     plugin_name: str = ""
     support_automate_all: bool = False
-    license_name = ""
+    license_name: str = ""

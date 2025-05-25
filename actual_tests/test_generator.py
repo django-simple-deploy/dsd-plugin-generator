@@ -14,3 +14,11 @@ def test_no_spaces_anywhere(tmp_path_factory):
     tmp_path = tmp_path_factory.mktemp("sample_plugin")
     print(f"\nWriting plugin to: {tmp_path.as_posix()}")
 
+    plugin_config = PluginConfig(
+        platform_name = "NewFly",
+        plugin_name = "dsd-newfly",
+        support_automate_all = True,
+        license_name = "eric",
+    )
+
+    
