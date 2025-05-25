@@ -39,12 +39,6 @@ if args.target_dir:
         msg += "\n  or choose another location to write to."
         sys.exit(msg)
 
-# Define empty PlugingConfig object.
-plugin_config = PluginConfig
-
-# Get info required to build a new plugin.
-generator_utils.get_plugin_info(plugin_config)
-
 
 def generate_plugin(plugin_config):
 
@@ -219,5 +213,8 @@ def generate_plugin(plugin_config):
 
 
 if __name__ == "__main__":
-    # Generate new plugin.
+    # Define empty PlugingConfig object, get required info, and generate plugin.
+    plugin_config = PluginConfig
+    generator_utils.get_plugin_info(plugin_config)
+
     generate_plugin(plugin_config)
