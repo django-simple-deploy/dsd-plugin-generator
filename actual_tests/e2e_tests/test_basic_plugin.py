@@ -50,12 +50,13 @@ def test_new_plugin_e2e(tmp_path_factory):
     gp.generate_plugin(plugin_config, args)
 
     # Clone django-simple-deploy in temp env.
-    cmd = f"git clone https://github.com/django-simple-deploy/django-simple-deploy.git {tmp_path.as_posix()}"
+    path_dsd = tmp_path / "django-simple-deploy"
+    cmd = f"git clone https://github.com/django-simple-deploy/django-simple-deploy.git {path_dsd.as_posix()}"
     cmd_parts = shlex.split(cmd)
+    # breakpoint()
     subprocess.run(cmd_parts)
 
     # Build a venv in the django-simple-deploy temp dir.
-    path_dsd = tmp_path / "django-simple-deploy"
     venv_dir = path_dsd / ".venv"
     cmd = f"uv venv {venv_dir}"
     cmd_parts = shlex.split(cmd)
@@ -63,8 +64,7 @@ def test_new_plugin_e2e(tmp_path_factory):
 
     # Make an editable install of django-simple-deploy in its environment.
     path_to_python = venv_dir / "bin" / "python"
-    cmd = f'uv pip install --python {path_to_python} -e "{path_dsd.as_posix}[dev]"'
-    breakpoint()
+    cmd = f'uv pip install --python {path_to_python} -e "{path_dsd.as_posix()}[dev]"'
     cmd_parts = shlex.split(cmd)
     subprocess.run(cmd_parts)
 
@@ -72,4 +72,6 @@ def test_new_plugin_e2e(tmp_path_factory):
     tests_dir = path_dsd / "tests"
     cmd = f"{path_to_python} -m pytest {tests_dir.as_posix()}"
     cmd_parts = shlex.split(cmd)
-    subprocess.run(cmd_parts)
+    output = subprocess.run(cmd_parts, capture_output=True)
+    stdout = output.stdout.decode()
+    breakpoint()
