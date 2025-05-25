@@ -60,6 +60,10 @@ def generate_plugin(plugin_config, args):
             msg += "\nPlease either move or rename that directory, choose a different package name,"
             msg += "\n  or write the new plugin to a different location."
             sys.exit(msg)
+    elif plugin_config.target_dir:
+        # This is mainly for testing.
+        assert plugin_config.target_dir.exists()
+        path_root_new = plugin_config.target_dir / plugin_config.pkg_name
     else:
         # Get permission to write to target directory.
         # path_root = Path(__file__).parent

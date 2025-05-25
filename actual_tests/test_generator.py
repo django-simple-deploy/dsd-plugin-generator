@@ -3,6 +3,7 @@
 import pytest
 
 from utils.plugin_config import PluginConfig
+import generate_plugin as gp
 
 
 # @pytest.fixture(tmp_dir):
@@ -21,4 +22,5 @@ def test_no_spaces_anywhere(tmp_path_factory):
         license_name = "eric",
     )
 
-    
+    plugin_config = PluginConfig
+    generate_plugin(plugin_config, args)
