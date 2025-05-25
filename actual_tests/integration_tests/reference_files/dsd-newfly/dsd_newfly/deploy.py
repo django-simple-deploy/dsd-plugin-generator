@@ -1,4 +1,4 @@
-"""Manages all New Fly-specific aspects of the deployment process.
+"""Manages all NewFly-specific aspects of the deployment process.
 
 Notes:
 - ...

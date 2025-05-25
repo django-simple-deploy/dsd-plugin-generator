@@ -1,4 +1,4 @@
-"""Manages all {PlatformName}-specific aspects of the deployment process.
+"""Manages all {{PlatformName}}-specific aspects of the deployment process.
 
 Notes:
 - ...
