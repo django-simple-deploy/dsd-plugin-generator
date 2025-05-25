@@ -23,7 +23,7 @@ def uv_available():
     cmd = "uv self version -q"
     cmd_parts = shlex.split(cmd)
     try:
-        subprocess.run(cmd_parts, capture_output=True)
+        subprocess.run(cmd_parts)
         return True
     except FileNotFoundError:
         # This is the exception raised on macOS when the command uv is unavailable.
@@ -49,4 +49,27 @@ def test_new_plugin_e2e(tmp_path_factory):
     args = Namespace(target_dir=tmp_path)
     gp.generate_plugin(plugin_config, args)
 
-    # Build a venv in temp dir.
+    # Clone django-simple-deploy in temp env.
+    cmd = f"git clone https://github.com/django-simple-deploy/django-simple-deploy.git {tmp_path.as_posix()}"
+    cmd_parts = shlex.split(cmd)
+    subprocess.run(cmd_parts)
+
+    # Build a venv in the django-simple-deploy temp dir.
+    path_dsd = tmp_path / "django-simple-deploy"
+    venv_dir = path_dsd / ".venv"
+    cmd = f"uv venv {venv_dir}"
+    cmd_parts = shlex.split(cmd)
+    subprocess.run(cmd_parts)
+
+    # Make an editable install of django-simple-deploy in its environment.
+    path_to_python = venv_dir / "bin" / "python"
+    cmd = f'uv pip install --python {path_to_python} -e "{path_dsd.as_posix}[dev]"'
+    breakpoint()
+    cmd_parts = shlex.split(cmd)
+    subprocess.run(cmd_parts)
+
+    # Run core tests without a plugin installed.
+    tests_dir = path_dsd / "tests"
+    cmd = f"{path_to_python} -m pytest {tests_dir.as_posix()}"
+    cmd_parts = shlex.split(cmd)
+    subprocess.run(cmd_parts)
