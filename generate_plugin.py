@@ -22,25 +22,28 @@ import argparse
 
 
 # Define CLI args.
-parser = argparse.ArgumentParser(description="Plugin generator for django-simple-deploy.")
-parser.add_argument(
-    "--target-dir",
-    type=str,
-    help="Path where the new directory will be written.",
-)
-args = parser.parse_args()
+def parse_cli():
+    parser = argparse.ArgumentParser(description="Plugin generator for django-simple-deploy.")
+    parser.add_argument(
+        "--target-dir",
+        type=str,
+        help="Path where the new directory will be written.",
+    )
+    args = parser.parse_args()
 
-# If provided, make sure target_dir exists before doing anything else.
-if args.target_dir:
-    path = Path(args.target_dir)
-    if not path.exists():
-        msg = f"The path {path.as_posix()} does not exist."
-        msg += "\n  Please create this directory and run the plugin generator again,"
-        msg += "\n  or choose another location to write to."
-        sys.exit(msg)
+    # If provided, make sure target_dir exists before doing anything else.
+    if args.target_dir:
+        path = Path(args.target_dir)
+        if not path.exists():
+            msg = f"The path {path.as_posix()} does not exist."
+            msg += "\n  Please create this directory and run the plugin generator again,"
+            msg += "\n  or choose another location to write to."
+            sys.exit(msg)
+
+    return args
 
 
-def generate_plugin(plugin_config):
+def generate_plugin(plugin_config, args):
 
     path_root = Path(__file__).parent
 
@@ -213,8 +216,9 @@ def generate_plugin(plugin_config):
 
 
 if __name__ == "__main__":
+    args = parse_cli()
     # Define empty PlugingConfig object, get required info, and generate plugin.
     plugin_config = PluginConfig
     generator_utils.get_plugin_info(plugin_config)
 
-    generate_plugin(plugin_config)
+    generate_plugin(plugin_config, args)
