@@ -1,4 +1,4 @@
-"""Manages all {{PlatformName}}-specific aspects of the deployment process.
+"""Manages all New Fly-specific aspects of the deployment process.
 
 Notes:
 - ...
@@ -6,7 +6,7 @@ Notes:
 
 import django_simple_deploy
 
-from {{PluginName}}.platform_deployer import PlatformDeployer
+from dsd_newfly.platform_deployer import PlatformDeployer
 from .plugin_config import PluginConfig
 
 
