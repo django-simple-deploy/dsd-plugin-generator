@@ -15,7 +15,7 @@ The --automate-all flag means django-simple-deploy will:
 - Open your deployed project in a new browser tab.
 """
 
-cancel_new_fly = """
+cancel_newfly = """
 Okay, cancelling New Fly configuration and deployment.
 """
 

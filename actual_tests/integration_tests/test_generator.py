@@ -56,9 +56,9 @@ def test_single_space_platform_name(tmp_path_factory):
 
 def assert_dirs_match(dc):
     """Check there are no differences in the dircmp object, and recurse all subdirs."""
+    assert not dc.diff_files
     assert not dc.left_only
     assert not dc.right_only
-    assert not dc.diff_files
     assert not dc.funny_files
 
     for dirname, dc in dc.subdirs.items():
