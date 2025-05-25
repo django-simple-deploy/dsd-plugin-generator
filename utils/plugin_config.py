@@ -7,7 +7,6 @@ from pathlib import Path
 @dataclass
 class PluginConfig:
     platform_name: str = ""
-    plugin_name: str = ""
+    pkg_name: str = ""
     support_automate_all: bool = False
     license_name: str = ""
-    target_dir: Path = None
