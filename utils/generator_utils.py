@@ -2,6 +2,8 @@
 
 from pathlib import Path
 import sys
+import shutil
+
 
 def get_plugin_info(plugin_config):
     """Prompts user for all the info needed to generate a new plugin."""
@@ -81,6 +83,125 @@ def validate_target_dir(args, plugin_config, path_root):
     print("\n\nThank you. Configuring plugin...")
     return path_root_new
 
+def build_new_plugin(plugin_config, path_root, path_root_new, platform_name_lower):
+    """Build the new plugin in the target directory."""
+    replacements = _get_replacements(plugin_config, platform_name_lower)
+
+    # Make new plugin dir, and required directory structure.
+    print(f"\nMaking new directory: {path_root_new.as_posix()}")
+    path_root_new.mkdir()
+
+    print("Building inner directory structure...")
+
+    # Using mkdir(parents=True), only need to make most deeply nested dirs.
+    new_dirs = [
+        "developer_resources",
+        f"dsd_{platform_name_lower}/templates",
+        "tests/integration_tests/reference_files",
+        "tests/e2e_tests",
+    ]
+
+    for new_dir in new_dirs:
+        path_new_dir = path_root_new / new_dir
+        print(f"  Making new directory: {path_new_dir.as_posix()}")
+        path_new_dir.mkdir(parents=True)
+
+
+    # --- Copy files that don't need modification. ---
+
+    print(f"\nCopying files...")
+    target_files = [
+        ".gitignore",
+        "developer_resources/README.md",
+        "dsd_platformname/__init__.py",
+        "tests/e2e_tests/__init__.py",
+        "tests/integration_tests/reference_files/.gitignore",
+        "tests/integration_tests/reference_files/Pipfile",
+        "tests/integration_tests/reference_files/pyproject.toml",
+        "tests/integration_tests/reference_files/requirements.txt",
+        "tests/integration_tests/reference_files/settings.py",
+    ]
+
+    for target_file in target_files:
+        print(f"  Copying file: {target_file}")
+        path_src = path_root / "plugin_template" / target_file
+        target_file_new = target_file.replace("dsd_platformname", f"dsd_{platform_name_lower}")
+        path_dest = path_root_new / target_file_new
+        shutil.copy(path_src, path_dest)
+
+    # --- Make replacements in file contents. ---
+
+    # Files that need to be parsed.
+    target_files = [
+        "pyproject.toml",
+        "tests/conftest.py",
+        "tests/integration_tests/test_platformname_config.py",
+        "tests/e2e_tests/utils.py",
+        "tests/e2e_tests/test_deployment.py",
+        "MANIFEST.in",
+        "README.md",
+        "CHANGELOG.md",
+        "LICENSE",
+        "dsd_platformname/platform_deployer.py",
+        "dsd_platformname/deploy.py",
+        "dsd_platformname/plugin_config.py",
+        "dsd_platformname/templates/dockerfile_example",
+        "dsd_platformname/templates/settings.py",
+        "dsd_platformname/deploy_messages.py",
+    ]
+
+    print("\nCustomizing files...")
+    for target_file in target_files:
+        # Read file.
+        path = path_root / "plugin_template" / target_file
+        contents = path.read_text()
+
+        # Modify contents and write file.
+        for k, v in replacements.items():
+            contents = contents.replace(k, v)
+
+        target_file_new = target_file.replace("platformname", f"{platform_name_lower}")
+        path_new = path_root_new / target_file_new
+        path_new.write_text(contents)
+
+        msg = f"  Wrote modified file: {target_file_new}"
+        print(msg)
+
+
+    # --- Make other changes.
+
+    # Remove automate_all support if needed.
+    if not plugin_config.support_automate_all:
+        print("Commenting out support for --automate-all...")
+        path = path_root_new / f"dsd_{platform_name_lower}" / "deploy_messages.py"
+        lines = path.read_text().splitlines()
+        new_lines = []
+        for line_num, line in enumerate(lines):
+            if line_num in (9,10,11,12,13,14,15, 77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95):
+                new_lines.append(f"# {line}")
+            else:
+                new_lines.append(line)
+
+        new_contents = "\n".join(new_lines)
+        path.write_text(new_contents)
+
 def get_platform_name_lower(platform_name):
     """Return a lowercase version of the platform name."""
     return platform_name.lower().replace("-", "").replace("_", "").replace(".", "").replace(" ", "")
+
+
+# --- Helper functions ---
+
+def _get_replacements(plugin_config, platform_name_lower):
+    """Get substitions for..."""
+    replacements = {
+        "{{PlatformName}}": plugin_config.platform_name,
+        "{{PlatformNameLower}}": platform_name_lower,
+        "{{PackageName}}": plugin_config.pkg_name,
+        "{{PluginName}}": plugin_config.pkg_name.replace("-", "_"),
+        "{{AutomateAllSupported}}": str(plugin_config.support_automate_all),
+        "{{LicenseName}}": plugin_config.license_name,
+    }
+
+    return replacements
+
