@@ -1,0 +1,58 @@
+name: dsd-plugin-generator CI tests
+
+on:
+  pull_request:
+
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+jobs:
+  test:
+    name: Run tests on ${{ matrix.os }} with Python ${{ matrix.python-version}}
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        # Only tested on macos currently.
+        # os: [ubuntu-latest, macos-latest, windows-latest]
+        os: [macos-latest]
+        python-version: ["3.12"] #["3.9", "3.10", "3.11", "3.12", "3.13"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      # --- macOS tests ---
+
+      - name: Run macOS
+
+        if: runner.os == "macOS":
+        run: |
+          # Install uv
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+
+          # Build and activate virtual environment
+          uv venv .venv
+          source .venv/bin/activate
+
+          # Install dependencies
+          uv pip install -r requirements.txt
+          uv pip install -e ../dsd-plugin-generator
+
+          # Configure Git
+          git config --global user.email "ci_tester@example.com"
+          git config --global user.name "Ci Tester"
+          git config --global init.defaultBranch main
+
+          # Run all unit and integration tests
+          source .venv/bin/activate
+          pytest -x
