@@ -169,7 +169,13 @@ def test_new_plugin_e2e(tmp_path_factory, cli_options):
         tests_dir = path_dsd / "tests"
         platform_name_lower = get_platform_name_lower(plugin_config.platform_name)
         test_filename = f"test_{platform_name_lower}_config.py"
-        cmd = f"cd {path_dsd.as_posix()} && source .venv/bin/activate && pytest -k {test_filename}"
+        # cmd = f"cd {path_dsd.as_posix()} && source .venv/bin/activate && pytest -k {test_filename}"
+        if cli_options.include_core_tests:
+            # Run full set of core django-simple-deploy tests, and plugin integration tests.
+            cmd = f"cd {path_dsd.as_posix()} && source .venv/bin/activate && pytest"
+        else:
+            # Only run the new plugin's integration tests.
+            cmd = f"cd {path_dsd.as_posix()} && source .venv/bin/activate && pytest -k {test_filename}"
         output = subprocess.run(cmd, capture_output=True,shell=True)
         stdout = output.stdout.decode()
 
