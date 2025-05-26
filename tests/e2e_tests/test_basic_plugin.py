@@ -67,7 +67,7 @@ def test_new_plugin_e2e(tmp_path_factory):
 
     # Clone django-simple-deploy in temp env.
     path_dsd = tmp_path / "django-simple-deploy"
-    cmd = f"git clone https://github.com/django-simple-deploy/django-simple-deploy.git {path_dsd.as_posix()}"
+    cmd = f"git clone https://github.com/django-simple-deploy/django-simple-deploy.git {path_dsd.as_posix()} --depth 1"
     cmd_parts = shlex.split(cmd)
     subprocess.run(cmd_parts)
 
