@@ -56,3 +56,6 @@ jobs:
           # Run all unit and integration tests
           # source .venv/bin/activate
           pytest -x
+
+          # Run e2e tests.
+          pytest tests/e2e_tests -s
