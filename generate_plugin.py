@@ -202,12 +202,12 @@ def generate_plugin(plugin_config, args):
         new_contents = "\n".join(new_lines)
         path.write_text(new_contents)
 
-    # Remove unneeded lines from README.
-    print("Modifying README...")
-    path = path_root_new / "README.md"
-    lines = path.read_text().splitlines()[:4]
-    contents = "\n".join(lines)
-    path.write_text(contents)
+    # # Remove unneeded lines from README.
+    # print("Modifying README...")
+    # path = path_root_new / "README.md"
+    # lines = path.read_text().splitlines()[:4]
+    # contents = "\n".join(lines)
+    # path.write_text(contents)
 
     msg = "\nFinished setting up your plugin. If there are any issues,"
     msg += "\nplease delete the new plugin and try again, or make manual changes"
