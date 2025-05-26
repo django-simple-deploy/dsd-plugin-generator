@@ -125,3 +125,46 @@ def test_new_plugin_e2e(tmp_path_factory):
             skipped = int(m[0][1])
             assert passed >= 65
             assert skipped >= 6
+
+    # Uninstall plugin.
+    cmd = f'uv pip uninstall --python {path_to_python} dsd-newfly'
+    cmd_parts = shlex.split(cmd)
+    subprocess.run(cmd_parts)
+
+    # Build "New Platform" plugin.
+    plugin_config = PluginConfig(
+        platform_name = "New Platform",
+        pkg_name = "dsd-newplatform",
+        support_automate_all = True,
+        license_name = "eric",
+    )
+
+    args = Namespace(target_dir=tmp_path)
+    gp.generate_plugin(plugin_config, args)
+
+    # Make sure we have the correct path to the new plugin.
+    path_new_plugin = tmp_path / "dsd-newplatform"
+    assert path_new_plugin.exists()
+
+    # Install plugin editable to django-simple-deploy env.
+    cmd = f'uv pip install --python {path_to_python} -e "{path_new_plugin.as_posix()}[dev]"'
+    cmd_parts = shlex.split(cmd)
+    subprocess.run(cmd_parts)
+
+    if run_core_plugin_tests:
+        # Run core tests **with** the new plugin installed.
+        tests_dir = path_dsd / "tests"
+        cmd = f"cd {path_dsd.as_posix()} && source .venv/bin/activate && pytest"
+        output = subprocess.run(cmd, capture_output=True,shell=True)
+        stdout = output.stdout.decode()
+
+        assert "test session starts" in stdout
+        assert "[100%]" in stdout
+
+        # Check number of core tests that passed and skipped.
+        m = re.findall(re_passed_skipped, stdout)
+        if m:
+            passed = int(m[0][0])
+            skipped = int(m[0][1])
+            assert passed >= 65
+            assert skipped >= 6
