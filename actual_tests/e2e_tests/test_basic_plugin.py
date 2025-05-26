@@ -126,7 +126,11 @@ def test_new_plugin_e2e(tmp_path_factory):
             assert passed >= 65
             assert skipped >= 6
 
-    # Uninstall plugin.
+    # Remove plugin, and test another one.
+    # This is much faster than having a completely separate test. We lose some test
+    # independence, but the speedup is worthwhile.
+
+    # Uninstall previous plugin.
     cmd = f'uv pip uninstall --python {path_to_python} dsd-newfly'
     cmd_parts = shlex.split(cmd)
     subprocess.run(cmd_parts)
