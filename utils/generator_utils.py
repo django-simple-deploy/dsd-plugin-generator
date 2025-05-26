@@ -185,6 +185,19 @@ def build_new_plugin(plugin_config, path_root, path_root_new, platform_name_lowe
         new_contents = "\n".join(new_lines)
         path.write_text(new_contents)
 
+def show_summary():
+    """Show a summary message after building the new plugin."""
+    msg = "\nFinished setting up your plugin. If there are any issues,"
+    msg += "\nplease delete the new plugin and try again, or make manual changes"
+    msg += "\nand file an issue on this project's repo:"
+    msg += "\n  https://github.com/django-simple-deploy/dsd-plugin-template/issues"
+    print(msg)
+
+    msg = "\nYou should now be able to make an editable install of this project into"
+    msg += "\na development version of django-simple-deploy, and all initial tests"
+    msg += "\nshould pass."
+    print(msg)
+
 def get_platform_name_lower(platform_name):
     """Return a lowercase version of the platform name."""
     return platform_name.lower().replace("-", "").replace("_", "").replace(".", "").replace(" ", "")
