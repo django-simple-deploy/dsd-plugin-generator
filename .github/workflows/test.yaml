@@ -46,7 +46,7 @@ jobs:
 
           # Install dependencies
           uv pip install -r requirements.txt
-          uv pip install -e ../dsd-plugin-generator
+          # uv pip install -e ../dsd-plugin-generator
 
           # Configure Git
           git config --global user.email "ci_tester@example.com"
@@ -54,5 +54,5 @@ jobs:
           git config --global init.defaultBranch main
 
           # Run all unit and integration tests
-          source .venv/bin/activate
+          # source .venv/bin/activate
           pytest -x
