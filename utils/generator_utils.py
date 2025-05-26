@@ -78,6 +78,7 @@ def validate_target_dir(args, plugin_config, path_root):
                 msg += "\n  The new repo will be written alongside this project."
                 sys.exit(msg)
 
+    print("\n\nThank you. Configuring plugin...")
     return path_root_new
 
 def get_platform_name_lower(platform_name):
