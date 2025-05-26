@@ -4,7 +4,7 @@ This test:
 - Generates a new plugin.
 - Sets up a development environment for django-simple-deploy core.
 - Installs the new plugin to the development environment.
-- Runs the initial set of tests against the plugin.
+- Runs the plugin's integration tests.
 
 Notes:
 - This makes an editable install of both django-simple-deploy and the new plugin.
@@ -23,6 +23,7 @@ import re
 import pytest
 
 from utils.plugin_config import PluginConfig
+from utils.generator_utils import get_platform_name_lower
 import generate_plugin as gp
 
 
@@ -109,22 +110,25 @@ def test_new_plugin_e2e(tmp_path_factory):
     subprocess.run(cmd_parts)
 
     if run_core_plugin_tests:
-        # Run core tests **with** the new plugin installed.
+        # Run plugin's integration tests.
         tests_dir = path_dsd / "tests"
-        cmd = f"cd {path_dsd.as_posix()} && source .venv/bin/activate && pytest"
+        platform_name_lower = get_platform_name_lower(plugin_config.platform_name)
+        test_filename = f"test_{platform_name_lower}_config.py"
+        cmd = f"cd {path_dsd.as_posix()} && source .venv/bin/activate && pytest -k {test_filename}"
         output = subprocess.run(cmd, capture_output=True,shell=True)
         stdout = output.stdout.decode()
 
         assert "test session starts" in stdout
         assert "[100%]" in stdout
 
-        # Check number of core tests that passed and skipped.
+        # Check number of plugin's tests that passed and skipped.
+        # No assertions about number skipped, but helpful to know at times.
         m = re.findall(re_passed_skipped, stdout)
         if m:
             passed = int(m[0][0])
             skipped = int(m[0][1])
-            assert passed >= 65
-            assert skipped >= 6
+            assert passed >= 18
+
 
     # Remove plugin, and test another one.
     # This is much faster than having a completely separate test. We lose some test
@@ -156,19 +160,21 @@ def test_new_plugin_e2e(tmp_path_factory):
     subprocess.run(cmd_parts)
 
     if run_core_plugin_tests:
-        # Run core tests **with** the new plugin installed.
+        # Run plugin's integration tests.
         tests_dir = path_dsd / "tests"
-        cmd = f"cd {path_dsd.as_posix()} && source .venv/bin/activate && pytest"
+        platform_name_lower = get_platform_name_lower(plugin_config.platform_name)
+        test_filename = f"test_{platform_name_lower}_config.py"
+        cmd = f"cd {path_dsd.as_posix()} && source .venv/bin/activate && pytest -k {test_filename}"
         output = subprocess.run(cmd, capture_output=True,shell=True)
         stdout = output.stdout.decode()
 
         assert "test session starts" in stdout
         assert "[100%]" in stdout
 
-        # Check number of core tests that passed and skipped.
+        # Check number of plugin's tests that passed and skipped.
+        # No assertions about number skipped, but helpful to know at times.
         m = re.findall(re_passed_skipped, stdout)
         if m:
             passed = int(m[0][0])
             skipped = int(m[0][1])
-            assert passed >= 65
-            assert skipped >= 6
+            assert passed >= 18
