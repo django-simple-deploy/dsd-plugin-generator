@@ -79,4 +79,10 @@ $ pytest tests/e2e_tests -s
 
 The `-s` flag is not required, but since the tests takes a fairly long time it's helpful to see the output as it's running. You can get a good sense of which steps are working by watching the output as the test runs.
 
+This will only run the integration tests for each new plugin in the e2e test. It will not run all of django-simple-deploy's tests for each new plugin. If you want to run the full set of tests, include an additional flag:
+
+```sh
+$ pytest tests/e2e_tests -s --include-core-tests
+```
+
 Currently, CI tests only run unit and integration tests. There's an open task in django-simple-deploy to remove the dependence on poetry and pipenv for running tests. When that is implemented, e2e tests can run much more easily in CI.
