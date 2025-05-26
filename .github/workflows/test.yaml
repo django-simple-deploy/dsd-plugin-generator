@@ -59,4 +59,4 @@ jobs:
 
           # Run e2e tests.
           # DEV: Enable this after remmoving requirement to test with Poetry and Pipenv.
-          # pytest tests/e2e_tests -s
+          # pytest tests/e2e_tests -s --include-core-tests
