@@ -44,6 +44,10 @@ def parse_cli():
 
 
 def generate_plugin(plugin_config, args):
+    """Generate a new plugin."""
+
+    # Validate the plugin_config object.
+    plugin_config.validate()
 
     path_root = Path(__file__).parent
 

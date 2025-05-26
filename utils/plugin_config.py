@@ -10,3 +10,8 @@ class PluginConfig:
     pkg_name: str = ""
     support_automate_all: bool = False
     license_name: str = ""
+
+    def validate(self):
+        """Validate the plugin config."""
+        assert self.platform_name
+        assert self.pkg_name
