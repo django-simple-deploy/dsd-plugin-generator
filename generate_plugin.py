@@ -141,7 +141,7 @@ def generate_plugin(plugin_config, args):
 
     for target_file in target_files:
         print(f"  Copying file: {target_file}")
-        path_src = path_root / target_file
+        path_src = path_root / "plugin_template" / target_file
         target_file_new = target_file.replace("dsd_platformname", f"dsd_{platform_name_lower}")
         path_dest = path_root_new / target_file_new
         shutil.copy(path_src, path_dest)
@@ -170,7 +170,7 @@ def generate_plugin(plugin_config, args):
     print("\nCustomizing files...")
     for target_file in target_files:
         # Read file.
-        path = path_root / target_file
+        path = path_root / "plugin_template" / target_file
         contents = path.read_text()
 
         # Modify contents and write file.
