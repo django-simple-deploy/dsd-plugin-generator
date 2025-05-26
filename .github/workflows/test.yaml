@@ -33,9 +33,9 @@ jobs:
 
       # --- macOS tests ---
 
-      - name: Run macOS
+      - name: Run macOS tests
 
-        if: runner.os == "macOS"
+        if: runner.os == 'macOS'
         run: |
           # Install uv
           curl -LsSf https://astral.sh/uv/install.sh | sh
