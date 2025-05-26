@@ -45,7 +45,8 @@ def uv_available():
 def test_new_plugin_e2e(tmp_path_factory, cli_options):
     # Flag to temporarily disable running dsd and plugin tests. This is helpful when
     # examining this environment. Otherwise pytest runs so many tests, this one can't
-    # easily be found.
+    # easily be found. This is not a CLI arg, because it only needs to be modified when you're
+    # working on this test, not when you're just running it.
     run_core_plugin_tests = True
 
     # Build a new plugin in temp dir.
@@ -114,12 +115,14 @@ def test_new_plugin_e2e(tmp_path_factory, cli_options):
         tests_dir = path_dsd / "tests"
         platform_name_lower = get_platform_name_lower(plugin_config.platform_name)
         test_filename = f"test_{platform_name_lower}_config.py"
+
         if cli_options.include_core_tests:
             # Run full set of core django-simple-deploy tests, and plugin integration tests.
             cmd = f"cd {path_dsd.as_posix()} && source .venv/bin/activate && pytest"
         else:
             # Only run the new plugin's integration tests.
             cmd = f"cd {path_dsd.as_posix()} && source .venv/bin/activate && pytest -k {test_filename}"
+            
         output = subprocess.run(cmd, capture_output=True,shell=True)
         stdout = output.stdout.decode()
 
@@ -132,7 +135,11 @@ def test_new_plugin_e2e(tmp_path_factory, cli_options):
         if m:
             passed = int(m[0][0])
             skipped = int(m[0][1])
-            assert passed >= 18
+
+            if cli_options.include_core_tests:
+                assert passed >= 65
+            else:
+                assert passed >= 18
 
 
     # Remove plugin, and test another one.
@@ -169,13 +176,14 @@ def test_new_plugin_e2e(tmp_path_factory, cli_options):
         tests_dir = path_dsd / "tests"
         platform_name_lower = get_platform_name_lower(plugin_config.platform_name)
         test_filename = f"test_{platform_name_lower}_config.py"
-        # cmd = f"cd {path_dsd.as_posix()} && source .venv/bin/activate && pytest -k {test_filename}"
+
         if cli_options.include_core_tests:
             # Run full set of core django-simple-deploy tests, and plugin integration tests.
             cmd = f"cd {path_dsd.as_posix()} && source .venv/bin/activate && pytest"
         else:
             # Only run the new plugin's integration tests.
             cmd = f"cd {path_dsd.as_posix()} && source .venv/bin/activate && pytest -k {test_filename}"
+
         output = subprocess.run(cmd, capture_output=True,shell=True)
         stdout = output.stdout.decode()
 
@@ -188,4 +196,8 @@ def test_new_plugin_e2e(tmp_path_factory, cli_options):
         if m:
             passed = int(m[0][0])
             skipped = int(m[0][1])
-            assert passed >= 18
+
+            if cli_options.include_core_tests:
+                assert passed >= 65
+            else:
+                assert passed >= 18
