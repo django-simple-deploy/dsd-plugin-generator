@@ -74,7 +74,7 @@ Integration tests run the generator and inspect the new plugin that's generated.
 To run e2e tests:
 
 ```sh
-$ pytest actual_tests/e2e_tests -s
+$ pytest tests/e2e_tests -s
 ```
 
 The `-s` flag is not required, but since the tests takes a fairly long time it's helpful to see the output as it's running. You can get a good sense of which steps are working by watching the output as the test runs.
