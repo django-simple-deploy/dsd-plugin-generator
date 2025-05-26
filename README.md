@@ -1,13 +1,12 @@
-# {{PackageName}}
+dsd-plugin-generator
+===
 
-A plugin for deploying Django projects to {{PlatformName}}, using django-simple-deploy.
-
-For full documentation, see the documentation for [django-simple-deploy](https://django-simple-deploy.readthedocs.io/en/latest/).
+This is a tool for generating new plugins for [django-simple-deploy](https://github.com/django-simple-deploy/django-simple-deploy). When you run the generator, you get a full plugin with a set of starting tests, and you get to focus on the deployment-specific code that's unique to your plugin.
 
 Usage notes
 ---
 
-- Download this repo; don't clone it.
+- Clone (or download) this repo.
 - Run `python configure_plugin.py`, and answer the small set of prompts:
 
 ```sh
@@ -63,7 +62,19 @@ test_codered_config.py ..................
 - Write methods in *platform_deployer.py* to carry out configuration for the target platform.
 - For more information about writing a plugin, see the [Plugins](https://django-simple-deploy.readthedocs.io/en/latest/plugins/) section of the django-simple-deploy documentation.
 
-Note
+Development notes
 ---
 
-This README serves as a template README for new plugins. The `{{PackageName}}` placeholder at the top of this file is replaced with the name of the new plugin.
+### Testing
+
+Currently, unit and integration tests finish in well under 1 second. End to end tests take almost 30s. For efficiency, a bare `pytest` call only runs unit and integration tests.
+
+Integration tests run the generator and inspect the new plugin that's generated. End to end tests go much further: they make a temp environment, generate a new plugin, install a development instance of django-simple-deploy, install the new plugin, and run the initial set of tests.
+
+To run e2e tests:
+
+```sh
+$ pytest tests/e2e_tests -s
+```
+
+The `-s` flag is not required, but since the tests takes a fairly long time it's helpful to see the output as it's running. You can get a good sense of which steps are working by watching the output as the test runs.
