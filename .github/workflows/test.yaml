@@ -17,7 +17,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # Only tested on macos currently.
+        # DEV: Only tested on macos currently.
         # os: [ubuntu-latest, macos-latest, windows-latest]
         os: [macos-latest]
         python-version: ["3.12"] #["3.9", "3.10", "3.11", "3.12", "3.13"]
@@ -46,6 +46,7 @@ jobs:
 
           # Install dependencies
           uv pip install -r requirements.txt
+          # I don't think this is required for this project.
           # uv pip install -e ../dsd-plugin-generator
 
           # Configure Git
@@ -54,8 +55,8 @@ jobs:
           git config --global init.defaultBranch main
 
           # Run all unit and integration tests
-          # source .venv/bin/activate
           pytest -x
 
           # Run e2e tests.
-          pytest tests/e2e_tests -s
+          # DEV: Enable this after remmoving requirement to test with Poetry and Pipenv.
+          # pytest tests/e2e_tests -s
