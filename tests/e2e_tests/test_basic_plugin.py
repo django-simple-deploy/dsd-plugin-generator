@@ -75,15 +75,6 @@ def test_new_plugin_e2e(tmp_path_factory, cli_options):
     if run_core_plugin_tests:
         # Run core tests without a plugin installed.
         e2e_utils.run_core_tests(path_dsd, path_to_python, cli_options)
-        # tests_dir = path_dsd / "tests"
-        # cmd = f"{path_to_python} -m pytest {tests_dir.as_posix()}"
-        # cmd_parts = shlex.split(cmd)
-        # output = subprocess.run(cmd_parts, capture_output=True)
-        # stdout = output.stdout.decode()
-
-        # assert "[100%]" in stdout
-        # # e2e_utils.check_core_only_tests(stdout)
-        # e2e_utils.check_core_plugin_tests(stdout, cli_options, core_only=True)
 
     # Install plugin editable to django-simple-deploy env.
     cmd = f'uv pip install --python {path_to_python} -e "{path_new_plugin.as_posix()}[dev]"'
@@ -91,16 +82,7 @@ def test_new_plugin_e2e(tmp_path_factory, cli_options):
     subprocess.run(cmd_parts)
 
     if run_core_plugin_tests:
-        # Run plugin's integration tests.
-        tests_dir = path_dsd / "tests"
-        platform_name_lower = get_platform_name_lower(plugin_config.platform_name)
-        cmd = e2e_utils.get_core_plugin_test_cmd(path_dsd, cli_options, platform_name_lower)
-
-        output = subprocess.run(cmd, capture_output=True,shell=True)
-        stdout = output.stdout.decode()
-
-        assert "[100%]" in stdout
-        e2e_utils.check_core_plugin_tests(stdout, cli_options)
+        e2e_utils.run_core_plugin_tests(path_dsd, plugin_config, cli_options)
 
 
     # Remove plugin, and test another one.
@@ -133,13 +115,4 @@ def test_new_plugin_e2e(tmp_path_factory, cli_options):
     subprocess.run(cmd_parts)
 
     if run_core_plugin_tests:
-        # Run plugin's integration tests.
-        tests_dir = path_dsd / "tests"
-        platform_name_lower = get_platform_name_lower(plugin_config.platform_name)
-        cmd = e2e_utils.get_core_plugin_test_cmd(path_dsd, cli_options, platform_name_lower)
-
-        output = subprocess.run(cmd, capture_output=True,shell=True)
-        stdout = output.stdout.decode()
-
-        assert "[100%]" in stdout
-        e2e_utils.check_core_plugin_tests(stdout, cli_options)
+        e2e_utils.run_core_plugin_tests(path_dsd, plugin_config, cli_options)
