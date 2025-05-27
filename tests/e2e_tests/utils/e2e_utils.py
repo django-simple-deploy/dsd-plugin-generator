@@ -30,15 +30,6 @@ def get_core_plugin_test_cmd(path_dsd, cli_options, platform_name_lower):
 
     return cmd
 
-# def check_core_only_tests(stdout):
-#     """Check output of running core tests with no plugin installed."""
-#     # No assertions about number skipped, but helpful to know at times.
-#     re_passed_skipped = r"""(\d*) passed, (\d*) skipped"""
-#     m = re.findall(re_passed_skipped, stdout)
-#     if m:
-#         passed = int(m[0][0])
-#         skipped = int(m[0][1])
-#         assert passed >= 31
 
 def check_core_plugin_tests(stdout, cli_options, core_only=False):
     """Check number of core and plugin tests that passed and skipped."""
