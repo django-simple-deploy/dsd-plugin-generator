@@ -17,6 +17,18 @@ def uv_available():
         return False
 
 
+def run_core_tests(path_dsd, path_to_python, cli_options):
+    """Run django-simple-deploy's test suite with no plugin installed."""
+    tests_dir = path_dsd / "tests"
+    cmd = f"{path_to_python} -m pytest {tests_dir.as_posix()}"
+    cmd_parts = shlex.split(cmd)
+    output = subprocess.run(cmd_parts, capture_output=True)
+    stdout = output.stdout.decode()
+
+    assert "[100%]" in stdout
+    check_core_plugin_tests(stdout, cli_options, core_only=True)
+
+
 def get_core_plugin_test_cmd(path_dsd, cli_options, platform_name_lower):
     """Get the command for running django-simple-deploy tests after a new plugin has been installed."""
     test_filename = f"test_{platform_name_lower}_config.py"

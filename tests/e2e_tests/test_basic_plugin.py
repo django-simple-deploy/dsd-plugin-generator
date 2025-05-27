@@ -74,15 +74,16 @@ def test_new_plugin_e2e(tmp_path_factory, cli_options):
 
     if run_core_plugin_tests:
         # Run core tests without a plugin installed.
-        tests_dir = path_dsd / "tests"
-        cmd = f"{path_to_python} -m pytest {tests_dir.as_posix()}"
-        cmd_parts = shlex.split(cmd)
-        output = subprocess.run(cmd_parts, capture_output=True)
-        stdout = output.stdout.decode()
+        e2e_utils.run_core_tests(path_dsd, path_to_python, cli_options)
+        # tests_dir = path_dsd / "tests"
+        # cmd = f"{path_to_python} -m pytest {tests_dir.as_posix()}"
+        # cmd_parts = shlex.split(cmd)
+        # output = subprocess.run(cmd_parts, capture_output=True)
+        # stdout = output.stdout.decode()
 
-        assert "[100%]" in stdout
-        # e2e_utils.check_core_only_tests(stdout)
-        e2e_utils.check_core_plugin_tests(stdout, cli_options, core_only=True)
+        # assert "[100%]" in stdout
+        # # e2e_utils.check_core_only_tests(stdout)
+        # e2e_utils.check_core_plugin_tests(stdout, cli_options, core_only=True)
 
     # Install plugin editable to django-simple-deploy env.
     cmd = f'uv pip install --python {path_to_python} -e "{path_new_plugin.as_posix()}[dev]"'
