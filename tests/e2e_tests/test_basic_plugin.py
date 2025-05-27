@@ -4,7 +4,7 @@ This test:
 - Generates a new plugin.
 - Sets up a development environment for django-simple-deploy core.
 - Installs the new plugin to the development environment.
-- Runs the initial set of tests against the plugin.
+- Runs the plugin's integration tests.
 
 Notes:
 - This makes an editable install of both django-simple-deploy and the new plugin.
@@ -18,33 +18,20 @@ from argparse import Namespace
 from pathlib import Path
 import subprocess
 import shlex
-import re
 
 import pytest
 
 from utils.plugin_config import PluginConfig
+from tests.e2e_tests.utils import e2e_utils
 import generate_plugin as gp
 
 
-def uv_available():
-    """Ensure uv is available before running test."""
-    cmd = "uv self version -q"
-    cmd_parts = shlex.split(cmd)
-    try:
-        subprocess.run(cmd_parts)
-        return True
-    except FileNotFoundError:
-        # This is the exception raised on macOS when the command uv is unavailable.
-        return False
-
-
-### --- Test function ---
-
-@pytest.mark.skipif(not uv_available(), reason="uv must be installed in order to run e2e tests.")
-def test_new_plugin_e2e(tmp_path_factory):
+@pytest.mark.skipif(not e2e_utils.uv_available(), reason="uv must be installed in order to run e2e tests.")
+def test_new_plugin_e2e(tmp_path_factory, cli_options):
     # Flag to temporarily disable running dsd and plugin tests. This is helpful when
     # examining this environment. Otherwise pytest runs so many tests, this one can't
-    # easily be found.
+    # easily be found. This is not a CLI arg, because it only needs to be modified when you're
+    # working on this test, not when you're just running it.
     run_core_plugin_tests = True
 
     # Build a new plugin in temp dir.
@@ -67,7 +54,7 @@ def test_new_plugin_e2e(tmp_path_factory):
 
     # Clone django-simple-deploy in temp env.
     path_dsd = tmp_path / "django-simple-deploy"
-    cmd = f"git clone https://github.com/django-simple-deploy/django-simple-deploy.git {path_dsd.as_posix()}"
+    cmd = f"git clone https://github.com/django-simple-deploy/django-simple-deploy.git {path_dsd.as_posix()} --depth 1"
     cmd_parts = shlex.split(cmd)
     subprocess.run(cmd_parts)
 
@@ -85,23 +72,7 @@ def test_new_plugin_e2e(tmp_path_factory):
 
     if run_core_plugin_tests:
         # Run core tests without a plugin installed.
-        tests_dir = path_dsd / "tests"
-        cmd = f"{path_to_python} -m pytest {tests_dir.as_posix()}"
-        cmd_parts = shlex.split(cmd)
-        output = subprocess.run(cmd_parts, capture_output=True)
-        stdout = output.stdout.decode()
-
-        assert "test session starts" in stdout
-        assert "[100%]" in stdout
-
-        # Check number of core tests that passed and skipped.
-        re_passed_skipped = r"""(\d*) passed, (\d*) skipped"""
-        m = re.findall(re_passed_skipped, stdout)
-        if m:
-            passed = int(m[0][0])
-            skipped = int(m[0][1])
-            assert passed >= 31
-            assert skipped >= 22
+        e2e_utils.run_core_tests(path_dsd, path_to_python, cli_options)
 
     # Install plugin editable to django-simple-deploy env.
     cmd = f'uv pip install --python {path_to_python} -e "{path_new_plugin.as_posix()}[dev]"'
@@ -109,22 +80,8 @@ def test_new_plugin_e2e(tmp_path_factory):
     subprocess.run(cmd_parts)
 
     if run_core_plugin_tests:
-        # Run core tests **with** the new plugin installed.
-        tests_dir = path_dsd / "tests"
-        cmd = f"cd {path_dsd.as_posix()} && source .venv/bin/activate && pytest"
-        output = subprocess.run(cmd, capture_output=True,shell=True)
-        stdout = output.stdout.decode()
+        e2e_utils.run_core_plugin_tests(path_dsd, plugin_config, cli_options)
 
-        assert "test session starts" in stdout
-        assert "[100%]" in stdout
-
-        # Check number of core tests that passed and skipped.
-        m = re.findall(re_passed_skipped, stdout)
-        if m:
-            passed = int(m[0][0])
-            skipped = int(m[0][1])
-            assert passed >= 65
-            assert skipped >= 6
 
     # Remove plugin, and test another one.
     # This is much faster than having a completely separate test. We lose some test
@@ -156,19 +113,4 @@ def test_new_plugin_e2e(tmp_path_factory):
     subprocess.run(cmd_parts)
 
     if run_core_plugin_tests:
-        # Run core tests **with** the new plugin installed.
-        tests_dir = path_dsd / "tests"
-        cmd = f"cd {path_dsd.as_posix()} && source .venv/bin/activate && pytest"
-        output = subprocess.run(cmd, capture_output=True,shell=True)
-        stdout = output.stdout.decode()
-
-        assert "test session starts" in stdout
-        assert "[100%]" in stdout
-
-        # Check number of core tests that passed and skipped.
-        m = re.findall(re_passed_skipped, stdout)
-        if m:
-            passed = int(m[0][0])
-            skipped = int(m[0][1])
-            assert passed >= 65
-            assert skipped >= 6
+        e2e_utils.run_core_plugin_tests(path_dsd, plugin_config, cli_options)
