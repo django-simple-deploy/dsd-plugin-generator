@@ -29,6 +29,19 @@ def get_plugin_info(plugin_config):
         msg = "What name do you want to appear in the LICENSE file? "
         plugin_config.license_name = input(msg)
 
+        path_root = Path(__file__).parents[1]
+        default_target_dir = path_root.parent
+        msg = "Where do you want to write the new plugin? "
+        msg += f"\n  Default location: {default_target_dir.as_posix()}"
+        msg += "\n(Press Enter to accept default location, or specify a different location.)"
+        msg += "\n"
+        target_dir_response = input(msg)
+        if not target_dir_response:
+            plugin_config.target_dir = default_target_dir
+        else:
+            plugin_config.target_dir = Path(target_dir_response)
+        breakpoint()
+
         # Review responses.
         msg = "\nHere's the information you've provided:"
         print(msg)
@@ -36,6 +49,7 @@ def get_plugin_info(plugin_config):
         print(f"  Package name: {plugin_config.pkg_name}")
         print(f"  Supports --automate-all: {plugin_config.support_automate_all}")
         print(f"  Name on license: {plugin_config.license_name}")
+        print(f"  Path for new plugin: {plugin_config.target_dir}")
 
         msg = "\nIs this information correct? (yes/no) "
         response = input(msg)
