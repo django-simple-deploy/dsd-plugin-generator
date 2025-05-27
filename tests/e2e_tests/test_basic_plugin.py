@@ -81,7 +81,8 @@ def test_new_plugin_e2e(tmp_path_factory, cli_options):
         stdout = output.stdout.decode()
 
         assert "[100%]" in stdout
-        e2e_utils.check_core_only_tests(stdout)
+        # e2e_utils.check_core_only_tests(stdout)
+        e2e_utils.check_core_plugin_tests(stdout, cli_options, core_only=True)
 
     # Install plugin editable to django-simple-deploy env.
     cmd = f'uv pip install --python {path_to_python} -e "{path_new_plugin.as_posix()}[dev]"'
