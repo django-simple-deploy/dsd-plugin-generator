@@ -18,12 +18,10 @@ from argparse import Namespace
 from pathlib import Path
 import subprocess
 import shlex
-import re
 
 import pytest
 
 from utils.plugin_config import PluginConfig
-from utils.generator_utils import get_platform_name_lower
 from tests.e2e_tests.utils import e2e_utils
 import generate_plugin as gp
 
