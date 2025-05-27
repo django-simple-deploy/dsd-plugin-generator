@@ -108,18 +108,18 @@ def test_new_plugin_e2e(tmp_path_factory, cli_options):
 
         assert "test session starts" in stdout
         assert "[100%]" in stdout
-
+        e2e_utils.check_core_plugin_tests(stdout, cli_options)
         # Check number of plugin's tests that passed and skipped.
         # No assertions about number skipped, but helpful to know at times.
-        m = re.findall(re_passed_skipped, stdout)
-        if m:
-            passed = int(m[0][0])
-            skipped = int(m[0][1])
+        # m = re.findall(re_passed_skipped, stdout)
+        # if m:
+        #     passed = int(m[0][0])
+        #     skipped = int(m[0][1])
 
-            if cli_options.include_core_tests:
-                assert passed >= 65
-            else:
-                assert passed >= 18
+        #     if cli_options.include_core_tests:
+        #         assert passed >= 65
+        #     else:
+        #         assert passed >= 18
 
 
     # Remove plugin, and test another one.
@@ -163,14 +163,15 @@ def test_new_plugin_e2e(tmp_path_factory, cli_options):
         assert "test session starts" in stdout
         assert "[100%]" in stdout
 
-        # Check number of plugin's tests that passed and skipped.
-        # No assertions about number skipped, but helpful to know at times.
-        m = re.findall(re_passed_skipped, stdout)
-        if m:
-            passed = int(m[0][0])
-            skipped = int(m[0][1])
+        e2e_utils.check_core_plugin_tests(stdout, cli_options)
+        # # Check number of plugin's tests that passed and skipped.
+        # # No assertions about number skipped, but helpful to know at times.
+        # m = re.findall(re_passed_skipped, stdout)
+        # if m:
+        #     passed = int(m[0][0])
+        #     skipped = int(m[0][1])
 
-            if cli_options.include_core_tests:
-                assert passed >= 65
-            else:
-                assert passed >= 18
+        #     if cli_options.include_core_tests:
+        #         assert passed >= 65
+        #     else:
+        #         assert passed >= 18

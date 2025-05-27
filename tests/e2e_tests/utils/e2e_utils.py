@@ -2,6 +2,7 @@
 
 import shlex
 import subprocess
+import re
 
 
 def uv_available():
@@ -28,3 +29,18 @@ def get_core_plugin_test_cmd(path_dsd, cli_options, platform_name_lower):
         cmd = f"cd {path_dsd.as_posix()} && source .venv/bin/activate && pytest -k {test_filename}"
 
     return cmd
+
+
+def check_core_plugin_tests(stdout, cli_options):
+    """Check number of plugin's tests that passed and skipped."""
+    # No assertions about number skipped, but helpful to know at times.
+    re_passed_skipped = r"""(\d*) passed, (\d*) skipped"""
+    m = re.findall(re_passed_skipped, stdout)
+    if m:
+        passed = int(m[0][0])
+        skipped = int(m[0][1])
+
+        if cli_options.include_core_tests:
+            assert passed >= 65
+        else:
+            assert passed >= 18
