@@ -28,21 +28,7 @@ from tests.e2e_tests.utils import e2e_utils
 import generate_plugin as gp
 
 
-def uv_available():
-    """Ensure uv is available before running test."""
-    cmd = "uv self version -q"
-    cmd_parts = shlex.split(cmd)
-    try:
-        subprocess.run(cmd_parts)
-        return True
-    except FileNotFoundError:
-        # This is the exception raised on macOS when the command uv is unavailable.
-        return False
-
-
-### --- Test function ---
-
-@pytest.mark.skipif(not uv_available(), reason="uv must be installed in order to run e2e tests.")
+@pytest.mark.skipif(not e2e_utils.uv_available(), reason="uv must be installed in order to run e2e tests.")
 def test_new_plugin_e2e(tmp_path_factory, cli_options):
     # Flag to temporarily disable running dsd and plugin tests. This is helpful when
     # examining this environment. Otherwise pytest runs so many tests, this one can't
