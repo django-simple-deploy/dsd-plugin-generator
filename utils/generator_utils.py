@@ -83,8 +83,14 @@ def validate_target_dir(args, plugin_config, path_root):
     print("\n\nThank you. Configuring plugin...")
     return path_root_new
 
-def build_new_plugin(plugin_config, path_root, path_root_new, platform_name_lower):
+def build_new_plugin(args, plugin_config):
     """Build the new plugin in the target directory."""
+    path_root = Path(__file__).parents[1]
+
+    # Make sure it's okay to write to the target directory.
+    path_root_new = validate_target_dir(args, plugin_config, path_root)
+
+    platform_name_lower = get_platform_name_lower(plugin_config.platform_name)
     replacements = _get_replacements(plugin_config, platform_name_lower)
 
     # Make new plugin dir, and required directory structure.

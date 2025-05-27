@@ -12,26 +12,11 @@ from utils import generator_utils
 from utils.plugin_config import PluginConfig
 from utils import cli
 
-from pathlib import Path
-import platform
-import subprocess
-import time
-import shlex
-import shutil
-import sys
-
 
 def generate_plugin(plugin_config, args):
     """Generate a new plugin."""
     plugin_config.validate()
-    path_root = Path(__file__).parent
-
-    # Make sure it's okay to write to the target directory.
-    path_root_new = generator_utils.validate_target_dir(args, plugin_config, path_root)
-
-    platform_name_lower = generator_utils.get_platform_name_lower(plugin_config.platform_name)
-
-    generator_utils.build_new_plugin(plugin_config, path_root, path_root_new, platform_name_lower)
+    generator_utils.build_new_plugin(args, plugin_config)
     generator_utils.show_summary()
 
 
