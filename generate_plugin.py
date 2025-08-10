@@ -23,7 +23,7 @@ def generate_plugin(plugin_config, args):
 if __name__ == "__main__":
     # Parse cli, get required info, and generate plugin.
     args = cli.parse_cli()
-    plugin_config = PluginConfig
+    plugin_config = PluginConfig()
     generator_utils.get_plugin_info(plugin_config)
 
     generate_plugin(plugin_config, args)
