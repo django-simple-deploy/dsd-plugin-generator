@@ -7,10 +7,10 @@ Usage notes
 ---
 
 - Clone (or download) this repo.
-- Run `python configure_plugin.py`, and answer the small set of prompts:
+- Run `python generate_plugin.py`, and answer the small set of prompts:
 
 ```sh
-$ python configure_plugin.py 
+$ python generate_plugin.py 
 What platform are you targeting? (Example: Fly.io) CodeRed
 What's the name of your plugin package? (Example: dsd-flyio) dsd-codered
 Will your plugin support the --automate-all CLI arg? (yes/no) yes
