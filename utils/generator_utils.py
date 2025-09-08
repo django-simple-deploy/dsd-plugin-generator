@@ -8,9 +8,11 @@ import shutil
 def get_plugin_info(args, plugin_config):
     """Prompts user for all the info needed to generate a new plugin."""
     while True:
+        # Platform
         msg = "What platform are you targeting? (Example: Fly.io) "
         plugin_config.platform_name = input(msg)
 
+        # Plugin package name
         msg = "What's the name of your plugin package? (Example: dsd-flyio) "
         while True:
             plugin_config.pkg_name = input(msg)
@@ -19,6 +21,7 @@ def get_plugin_info(args, plugin_config):
             else:
                 print("The package name must start with `dsd-`.")
 
+        # --automate-all support
         msg = "Will your plugin support the --automate-all CLI arg? (yes/no) "
         response = input(msg)
         if response.lower() in ("yes", "y"):
@@ -26,9 +29,11 @@ def get_plugin_info(args, plugin_config):
         else:
             plugin_config.support_automate_all = False
 
+        # LICENSE name
         msg = "What name do you want to appear in the LICENSE file? "
         plugin_config.license_name = input(msg)
 
+        # Path to new plugin
         path_root = Path(__file__).parents[1]
         default_target_dir = path_root.parent
         msg = "Where do you want to write the new plugin? "
@@ -54,7 +59,7 @@ def get_plugin_info(args, plugin_config):
         msg = "\nIs this information correct? (yes/no) "
         response = input(msg)
         if response.lower() in ("yes", "y"):
-            break
+            return
 
         msg = "Sorry, please try again.\n\n"
         print(msg)
