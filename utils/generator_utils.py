@@ -49,7 +49,7 @@ def get_plugin_info(args, plugin_config):
                 plugin_config.target_dir = Path(target_dir_response)
         else:
             # args.target_dir is primarily for testing, but someone may use it directly.
-            msg = "Is this where you want to write the new plugin? {args.target_dir}"
+            msg = f"\nIs this where you want to write the new plugin? {args.target_dir}"
             msg += "\n(Press Enter to use this location, or specify a different location.)"
             msg += "\n"
             target_dir_response = input(msg)
