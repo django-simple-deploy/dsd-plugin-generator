@@ -45,7 +45,6 @@ def get_plugin_info(args, plugin_config):
             plugin_config.target_dir = default_target_dir
         else:
             plugin_config.target_dir = Path(target_dir_response)
-        breakpoint()
 
         # Review responses.
         msg = "\nHere's the information you've provided:"
