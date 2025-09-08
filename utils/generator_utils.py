@@ -36,15 +36,27 @@ def get_plugin_info(args, plugin_config):
         # Path to new plugin
         path_root = Path(__file__).parents[1]
         default_target_dir = path_root.parent
-        msg = "Where do you want to write the new plugin? "
-        msg += f"\n  Default location: {default_target_dir.as_posix()}"
-        msg += "\n(Press Enter to accept default location, or specify a different location.)"
-        msg += "\n"
-        target_dir_response = input(msg)
-        if not target_dir_response:
-            plugin_config.target_dir = default_target_dir
+
+        if not args.target_dir:
+            msg = "Where do you want to write the new plugin? "
+            msg += f"\n  Default location: {default_target_dir.as_posix()}"
+            msg += "\n(Press Enter to accept default location, or specify a different location.)"
+            msg += "\n"
+            target_dir_response = input(msg)
+            if not target_dir_response:
+                plugin_config.target_dir = default_target_dir
+            else:
+                plugin_config.target_dir = Path(target_dir_response)
         else:
-            plugin_config.target_dir = Path(target_dir_response)
+            # args.target_dir is primarily for testing, but someone may use it directly.
+            msg = "Is this where you want to write the new plugin? {args.target_dir}"
+            msg += "\n(Press Enter to use this location, or specify a different location.)"
+            msg += "\n"
+            target_dir_response = input(msg)
+            if not target_dir_response:
+                plugin_config.target_dir = args.target_dir
+            else:
+                plugin_config.target_dir = Path(target_dir_response)
 
         # Review responses.
         msg = "\nHere's the information you've provided:"
