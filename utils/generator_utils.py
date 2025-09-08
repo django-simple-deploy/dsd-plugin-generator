@@ -5,12 +5,14 @@ import sys
 import shutil
 
 
-def get_plugin_info(plugin_config):
+def get_plugin_info(args, plugin_config):
     """Prompts user for all the info needed to generate a new plugin."""
     while True:
+        # Platform
         msg = "What platform are you targeting? (Example: Fly.io) "
         plugin_config.platform_name = input(msg)
 
+        # Plugin package name
         msg = "What's the name of your plugin package? (Example: dsd-flyio) "
         while True:
             plugin_config.pkg_name = input(msg)
@@ -19,6 +21,7 @@ def get_plugin_info(plugin_config):
             else:
                 print("The package name must start with `dsd-`.")
 
+        # --automate-all support
         msg = "Will your plugin support the --automate-all CLI arg? (yes/no) "
         response = input(msg)
         if response.lower() in ("yes", "y"):
@@ -26,8 +29,34 @@ def get_plugin_info(plugin_config):
         else:
             plugin_config.support_automate_all = False
 
+        # LICENSE name
         msg = "What name do you want to appear in the LICENSE file? "
         plugin_config.license_name = input(msg)
+
+        # Path to new plugin
+        path_root = Path(__file__).parents[1]
+        default_target_dir = path_root.parent
+
+        if not args.target_dir:
+            msg = "Where do you want to write the new plugin? "
+            msg += f"\n  Default location: {default_target_dir.as_posix()}"
+            msg += "\n(Press Enter to accept default location, or specify a different location.)"
+            msg += "\n"
+            target_dir_response = input(msg)
+            if not target_dir_response:
+                plugin_config.target_dir = default_target_dir
+            else:
+                plugin_config.target_dir = Path(target_dir_response)
+        else:
+            # args.target_dir is primarily for testing, but someone may use it directly.
+            msg = f"\nIs this where you want to write the new plugin? {args.target_dir}"
+            msg += "\n(Press Enter to use this location, or specify a different location.)"
+            msg += "\n"
+            target_dir_response = input(msg)
+            if not target_dir_response:
+                plugin_config.target_dir = args.target_dir
+            else:
+                plugin_config.target_dir = Path(target_dir_response)
 
         # Review responses.
         msg = "\nHere's the information you've provided:"
@@ -36,11 +65,12 @@ def get_plugin_info(plugin_config):
         print(f"  Package name: {plugin_config.pkg_name}")
         print(f"  Supports --automate-all: {plugin_config.support_automate_all}")
         print(f"  Name on license: {plugin_config.license_name}")
+        print(f"  Path for new plugin: {plugin_config.target_dir}")
 
         msg = "\nIs this information correct? (yes/no) "
         response = input(msg)
         if response.lower() in ("yes", "y"):
-            break
+            return
 
         msg = "Sorry, please try again.\n\n"
         print(msg)
