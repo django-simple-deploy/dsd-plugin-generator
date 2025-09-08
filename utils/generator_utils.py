@@ -5,7 +5,7 @@ import sys
 import shutil
 
 
-def get_plugin_info(plugin_config):
+def get_plugin_info(args, plugin_config):
     """Prompts user for all the info needed to generate a new plugin."""
     while True:
         msg = "What platform are you targeting? (Example: Fly.io) "
