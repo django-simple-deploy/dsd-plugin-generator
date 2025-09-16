@@ -121,7 +121,10 @@ def build_new_plugin(args, plugin_config):
     path_root_new = validate_target_dir(args, plugin_config, path_root)
 
     platform_name_lower = get_platform_name_lower(plugin_config.platform_name)
+    main_dir_name = get_main_dir_name(plugin_config.pkg_name)
+
     replacements = _get_replacements(plugin_config, platform_name_lower)
+
 
     # Make new plugin dir, and required directory structure.
     print(f"\nMaking new directory: {path_root_new.as_posix()}")
@@ -132,7 +135,7 @@ def build_new_plugin(args, plugin_config):
     # Using mkdir(parents=True), only need to make most deeply nested dirs.
     new_dirs = [
         "developer_resources",
-        f"dsd_{platform_name_lower}/templates",
+        f"{main_dir_name}/templates",
         "tests/integration_tests/reference_files",
         "tests/e2e_tests",
     ]
@@ -161,7 +164,7 @@ def build_new_plugin(args, plugin_config):
     for target_file in target_files:
         print(f"  Copying file: {target_file}")
         path_src = path_root / "plugin_template" / target_file
-        target_file_new = target_file.replace("dsd_platformname", f"dsd_{platform_name_lower}")
+        target_file_new = target_file.replace("dsd_platformname", f"{main_dir_name}")
         path_dest = path_root_new / target_file_new
         shutil.copy(path_src, path_dest)
 
@@ -196,7 +199,7 @@ def build_new_plugin(args, plugin_config):
         for k, v in replacements.items():
             contents = contents.replace(k, v)
 
-        target_file_new = target_file.replace("platformname", f"{platform_name_lower}")
+        target_file_new = target_file.replace("dsd_platformname", f"{main_dir_name}")
         path_new = path_root_new / target_file_new
         path_new.write_text(contents)
 
@@ -209,7 +212,7 @@ def build_new_plugin(args, plugin_config):
     # Remove automate_all support if needed.
     if not plugin_config.support_automate_all:
         print("Commenting out support for --automate-all...")
-        path = path_root_new / f"dsd_{platform_name_lower}" / "deploy_messages.py"
+        path = path_root_new / f"{main_dir_name}" / "deploy_messages.py"
         lines = path.read_text().splitlines()
         new_lines = []
         for line_num, line in enumerate(lines):
@@ -237,6 +240,11 @@ def show_summary():
 def get_platform_name_lower(platform_name):
     """Return a lowercase version of the platform name."""
     return platform_name.lower().replace("-", "").replace("_", "").replace(".", "").replace(" ", "")
+
+def get_main_dir_name(pkg_name):
+    """Return name of main dir. For dsd-new-platform, that's dsd_new_platform."""
+    pkg_name_lower = pkg_name.lower().replace("-", "_")
+    return f"{pkg_name_lower}"
 
 
 # --- Helper functions ---
