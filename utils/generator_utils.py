@@ -200,6 +200,7 @@ def build_new_plugin(args, plugin_config):
             contents = contents.replace(k, v)
 
         target_file_new = target_file.replace("dsd_platformname", f"{main_dir_name}")
+        target_file_new = target_file_new.replace("test_platformname_config.py", f"test_{platform_name_lower}_config.py")
         path_new = path_root_new / target_file_new
         path_new.write_text(contents)
 

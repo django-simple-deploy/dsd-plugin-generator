@@ -32,7 +32,7 @@ def test_new_plugin_e2e(tmp_path_factory, cli_options):
     # examining this environment. Otherwise pytest runs so many tests, this one can't
     # easily be found. This is not a CLI arg, because it only needs to be modified when you're
     # working on this test, not when you're just running it.
-    run_core_plugin_tests = False
+    run_core_plugin_tests = True
 
     # Build a new plugin in temp dir.
     tmp_path = tmp_path_factory.mktemp("e2e_new_plugin_test")

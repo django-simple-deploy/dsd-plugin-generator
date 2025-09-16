@@ -27,6 +27,7 @@ def test_no_spaces_anywhere(tmp_path_factory):
 
     path_ref_dir = Path(__file__).parent / "reference_files" / "dsd-newfly-no-space"
     path_test_plugin = tmp_path / "dsd-newfly"
+    assert path_test_plugin.exists()
 
     dc = dircmp(path_test_plugin, path_ref_dir, ignore=[".DS_Store", "__pycache__"])
     assert_dirs_match(dc)
