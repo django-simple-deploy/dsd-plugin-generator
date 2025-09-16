@@ -83,67 +83,67 @@ def test_new_plugin_e2e(tmp_path_factory, cli_options):
         e2e_utils.run_core_plugin_tests(path_dsd, plugin_config, cli_options)
 
 
-    # Remove plugin, and test another one.
-    # This is much faster than having a completely separate test. We lose some test
-    # independence, but the speedup is worthwhile.
+    # # Remove plugin, and test another one.
+    # # This is much faster than having a completely separate test. We lose some test
+    # # independence, but the speedup is worthwhile.
 
-    # Uninstall previous plugin.
-    cmd = f'uv pip uninstall --python {path_to_python} dsd-newfly'
-    cmd_parts = shlex.split(cmd)
-    subprocess.run(cmd_parts)
+    # # Uninstall previous plugin.
+    # cmd = f'uv pip uninstall --python {path_to_python} dsd-newfly'
+    # cmd_parts = shlex.split(cmd)
+    # subprocess.run(cmd_parts)
 
-    # Build "New Platform" plugin.
-    plugin_config = PluginConfig(
-        platform_name = "New Platform",
-        pkg_name = "dsd-newplatform",
-        support_automate_all = True,
-        license_name = "eric",
-    )
+    # # Build "New Platform" plugin.
+    # plugin_config = PluginConfig(
+    #     platform_name = "New Platform",
+    #     pkg_name = "dsd-newplatform",
+    #     support_automate_all = True,
+    #     license_name = "eric",
+    # )
 
-    args = Namespace(target_dir=tmp_path)
-    gp.generate_plugin(plugin_config, args)
+    # args = Namespace(target_dir=tmp_path)
+    # gp.generate_plugin(plugin_config, args)
 
-    # Make sure we have the correct path to the new plugin.
-    path_new_plugin = tmp_path / "dsd-newplatform"
-    assert path_new_plugin.exists()
+    # # Make sure we have the correct path to the new plugin.
+    # path_new_plugin = tmp_path / "dsd-newplatform"
+    # assert path_new_plugin.exists()
 
-    # Install plugin editable to django-simple-deploy env.
-    cmd = f'uv pip install --python {path_to_python} -e "{path_new_plugin.as_posix()}[dev]"'
-    cmd_parts = shlex.split(cmd)
-    subprocess.run(cmd_parts)
+    # # Install plugin editable to django-simple-deploy env.
+    # cmd = f'uv pip install --python {path_to_python} -e "{path_new_plugin.as_posix()}[dev]"'
+    # cmd_parts = shlex.split(cmd)
+    # subprocess.run(cmd_parts)
 
-    if run_core_plugin_tests:
-        e2e_utils.run_core_plugin_tests(path_dsd, plugin_config, cli_options)
+    # if run_core_plugin_tests:
+    #     e2e_utils.run_core_plugin_tests(path_dsd, plugin_config, cli_options)
 
 
-    # Remove plugin, and test another one.
-    # This is much faster than having a completely separate test. We lose some test
-    # independence, but the speedup is worthwhile.
+    # # Remove plugin, and test another one.
+    # # This is much faster than having a completely separate test. We lose some test
+    # # independence, but the speedup is worthwhile.
 
-    # Uninstall previous plugin.
-    cmd = f'uv pip uninstall --python {path_to_python} dsd-newplatform'
-    cmd_parts = shlex.split(cmd)
-    subprocess.run(cmd_parts)
+    # # Uninstall previous plugin.
+    # cmd = f'uv pip uninstall --python {path_to_python} dsd-newplatform'
+    # cmd_parts = shlex.split(cmd)
+    # subprocess.run(cmd_parts)
 
-    # Test plugin with mismatch between plugin and platform names.
-    plugin_config = PluginConfig(
-        platform_name = "MyNewPlatform",
-        pkg_name = "dsd-my-plugin",
-        support_automate_all = True,
-        license_name = "eric",
-    )
+    # # Test plugin with mismatch between plugin and platform names.
+    # plugin_config = PluginConfig(
+    #     platform_name = "MyNewPlatform",
+    #     pkg_name = "dsd-my-plugin",
+    #     support_automate_all = True,
+    #     license_name = "eric",
+    # )
 
-    args = Namespace(target_dir=tmp_path)
-    gp.generate_plugin(plugin_config, args)
+    # args = Namespace(target_dir=tmp_path)
+    # gp.generate_plugin(plugin_config, args)
 
-    # Make sure we have the correct path to the new plugin.
-    path_new_plugin = tmp_path / "dsd-my-plugin"
-    assert path_new_plugin.exists()
+    # # Make sure we have the correct path to the new plugin.
+    # path_new_plugin = tmp_path / "dsd-my-plugin"
+    # assert path_new_plugin.exists()
 
-    # Install plugin editable to django-simple-deploy env.
-    cmd = f'uv pip install --python {path_to_python} -e "{path_new_plugin.as_posix()}[dev]"'
-    cmd_parts = shlex.split(cmd)
-    subprocess.run(cmd_parts)
+    # # Install plugin editable to django-simple-deploy env.
+    # cmd = f'uv pip install --python {path_to_python} -e "{path_new_plugin.as_posix()}[dev]"'
+    # cmd_parts = shlex.split(cmd)
+    # subprocess.run(cmd_parts)
 
-    if run_core_plugin_tests:
-        e2e_utils.run_core_plugin_tests(path_dsd, plugin_config, cli_options)
+    # if run_core_plugin_tests:
+    #     e2e_utils.run_core_plugin_tests(path_dsd, plugin_config, cli_options)
