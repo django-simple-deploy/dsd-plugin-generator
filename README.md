@@ -86,3 +86,9 @@ $ pytest tests/e2e_tests -s --include-core-tests
 ```
 
 Currently, CI tests only run unit and integration tests. There's an open task in django-simple-deploy to remove the dependence on poetry and pipenv for running tests. When that is implemented, e2e tests can run much more easily in CI.
+
+Documentation
+---
+
+For more information, see the [docs](docs/) directory.
+
