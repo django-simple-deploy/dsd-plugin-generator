@@ -52,6 +52,24 @@ def test_single_space_platform_name(tmp_path_factory):
     dc = dircmp(path_test_plugin, path_ref_dir, ignore=[".DS_Store", "__pycache__"])
     assert_dirs_match(dc)
 
+def test_reject_not_start_dsd_dash(tmp_path_factory):
+    """Test that a package name not starting with dsd- is rejected."""
+    tmp_path = tmp_path_factory.mktemp("sample_plugin_no_space")
+    print(f"\nWriting plugin to: {tmp_path.as_posix()}")
+
+    plugin_config = PluginConfig(
+        platform_name = "NewFly",
+        pkg_name = "newfly-deployer",
+        support_automate_all = True,
+        license_name = "eric",
+    )
+
+    args = Namespace(target_dir=tmp_path)
+    
+    with pytest.raises(AssertionError):
+        gp.generate_plugin(plugin_config, args)
+
+
 
 # --- Helper functions ---
 
