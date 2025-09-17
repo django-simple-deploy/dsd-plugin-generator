@@ -1,9 +1,15 @@
 """Utility functions for e2e tests."""
 
+
+from argparse import Namespace
 import shlex
 import subprocess
 import re
 
+import pytest
+
+import generate_plugin as gp
+from utils.plugin_config import PluginConfig
 from utils.generator_utils import get_platform_name_lower
 
 
@@ -17,6 +23,23 @@ def uv_available():
     except FileNotFoundError:
         # This is the exception raised on macOS when the command uv is unavailable.
         return False
+
+def generate_plugin(dev_env, plugin_config):
+    """Generate a new plugin, and install it to the django-simple-deploy dev env.
+    """
+    dev_env_dir, path_to_python, path_dsd = dev_env
+
+    args = Namespace(target_dir=dev_env_dir)
+    gp.generate_plugin(plugin_config, args)
+
+    # Make sure we have the correct path to the new plugin.
+    path_new_plugin = dev_env_dir / plugin_config.pkg_name
+    assert path_new_plugin.exists()
+
+    # Install plugin editable to django-simple-deploy env.
+    cmd = f'uv pip install --python {path_to_python} -e "{path_new_plugin.as_posix()}[dev]"'
+    cmd_parts = shlex.split(cmd)
+    subprocess.run(cmd_parts)
 
 
 def run_dsd_core_tests(path_dsd, path_to_python, cli_options):

@@ -1,21 +1,13 @@
 """Configuration for e2e test runs."""
 
-# from argparse import Namespace
 import json
-# from pathlib import Path
 import subprocess
 import shlex
-
-import pytest
-
-# from utils.plugin_config import PluginConfig
-from tests.e2e_tests.utils import e2e_utils
-# import generate_plugin as gp
-
-
 from dataclasses import dataclass
 
 import pytest
+
+from tests.e2e_tests.utils import e2e_utils
 
 
 # --- Custom CLI args ---
