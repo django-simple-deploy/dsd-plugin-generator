@@ -26,31 +26,18 @@ from tests.e2e_tests.utils import e2e_utils
 import generate_plugin as gp
 
 
-@pytest.mark.skipif(not e2e_utils.uv_available(), reason="uv must be installed in order to run e2e tests.")
-def test_new_plugin_e2e(tmp_path_factory, cli_options):
-    # Flag to temporarily disable running dsd and plugin tests. This is helpful when
-    # examining this environment. Otherwise pytest runs so many tests, this one can't
-    # easily be found. This is not a CLI arg, because it only needs to be modified when you're
-    # working on this test, not when you're just running it.
-    run_core_plugin_tests = True
+@pytest.fixture(scope="module")
+def get_dev_env(tmp_path_factory, cli_options):
+    """Set up an env where plugins can be generated and tested within django-simple-deploy.
 
-    # Build a new plugin in temp dir.
+    - Set up a temp dir.
+    - Install dev env for django-simple-deploy.
+    - We can generate plugins, with this temp dir as target location.
+    - Then install newly-generated plugins to dsd dev env, and run tests from dsd.
+    """
+    # Make the temp directory for the dsd development env.
     tmp_path = tmp_path_factory.mktemp("e2e_new_plugin_test")
     print(f"\nBuilding e2e test env at: {tmp_path.as_posix()}")
-
-    plugin_config = PluginConfig(
-        platform_name = "NewFly",
-        pkg_name = "dsd-newfly",
-        support_automate_all = True,
-        license_name = "eric",
-    )
-
-    args = Namespace(target_dir=tmp_path)
-    gp.generate_plugin(plugin_config, args)
-
-    # Make sure we have the correct path to the new plugin.
-    path_new_plugin = tmp_path / "dsd-newfly"
-    assert path_new_plugin.exists()
 
     # Clone django-simple-deploy in temp env.
     path_dsd = tmp_path / "django-simple-deploy"
@@ -70,9 +57,63 @@ def test_new_plugin_e2e(tmp_path_factory, cli_options):
     cmd_parts = shlex.split(cmd)
     subprocess.run(cmd_parts)
 
+    run_core_plugin_tests = True
     if run_core_plugin_tests:
         # Run core tests without a plugin installed.
         e2e_utils.run_core_tests(path_dsd, path_to_python, cli_options)
+
+    return tmp_path, path_to_python, path_dsd
+
+
+
+@pytest.mark.skipif(not e2e_utils.uv_available(), reason="uv must be installed in order to run e2e tests.")
+def test_new_plugin_e2e(get_dev_env, cli_options):
+    dev_env_dir, path_to_python, path_dsd = get_dev_env
+    # Flag to temporarily disable running dsd and plugin tests. This is helpful when
+    # examining this environment. Otherwise pytest runs so many tests, this one can't
+    # easily be found. This is not a CLI arg, because it only needs to be modified when you're
+    # working on this test, not when you're just running it.
+    run_core_plugin_tests = True
+
+    # # Build a new plugin in temp dir.
+    # tmp_path = tmp_path_factory.mktemp("e2e_new_plugin_test")
+    # print(f"\nBuilding e2e test env at: {tmp_path.as_posix()}")
+
+    plugin_config = PluginConfig(
+        platform_name = "NewFly",
+        pkg_name = "dsd-newfly",
+        support_automate_all = True,
+        license_name = "eric",
+    )
+
+    args = Namespace(target_dir=dev_env_dir)
+    gp.generate_plugin(plugin_config, args)
+
+    # Make sure we have the correct path to the new plugin.
+    path_new_plugin = dev_env_dir / "dsd-newfly"
+    assert path_new_plugin.exists()
+
+    # # Clone django-simple-deploy in temp env.
+    # path_dsd = tmp_path / "django-simple-deploy"
+    # cmd = f"git clone https://github.com/django-simple-deploy/django-simple-deploy.git {path_dsd.as_posix()} --depth 1"
+    # cmd_parts = shlex.split(cmd)
+    # subprocess.run(cmd_parts)
+
+    # # Build a venv in the django-simple-deploy temp dir.
+    # venv_dir = path_dsd / ".venv"
+    # cmd = f"uv venv {venv_dir}"
+    # cmd_parts = shlex.split(cmd)
+    # subprocess.run(cmd_parts)
+
+    # # Make an editable install of django-simple-deploy in its environment.
+    # path_to_python = venv_dir / "bin" / "python"
+    # cmd = f'uv pip install --python {path_to_python} -e "{path_dsd.as_posix()}[dev]"'
+    # cmd_parts = shlex.split(cmd)
+    # subprocess.run(cmd_parts)
+
+    # if run_core_plugin_tests:
+    #     # Run core tests without a plugin installed.
+    #     e2e_utils.run_core_tests(path_dsd, path_to_python, cli_options)
 
     # Install plugin editable to django-simple-deploy env.
     cmd = f'uv pip install --python {path_to_python} -e "{path_new_plugin.as_posix()}[dev]"'
@@ -100,11 +141,11 @@ def test_new_plugin_e2e(tmp_path_factory, cli_options):
         license_name = "eric",
     )
 
-    args = Namespace(target_dir=tmp_path)
+    args = Namespace(target_dir=dev_env_dir)
     gp.generate_plugin(plugin_config, args)
 
     # Make sure we have the correct path to the new plugin.
-    path_new_plugin = tmp_path / "dsd-newplatform"
+    path_new_plugin = dev_env_dir / "dsd-newplatform"
     assert path_new_plugin.exists()
 
     # Install plugin editable to django-simple-deploy env.
@@ -133,11 +174,11 @@ def test_new_plugin_e2e(tmp_path_factory, cli_options):
         license_name = "eric",
     )
 
-    args = Namespace(target_dir=tmp_path)
+    args = Namespace(target_dir=dev_env_dir)
     gp.generate_plugin(plugin_config, args)
 
     # Make sure we have the correct path to the new plugin.
-    path_new_plugin = tmp_path / "dsd-my-plugin"
+    path_new_plugin = dev_env_dir / "dsd-my-plugin"
     assert path_new_plugin.exists()
 
     # Install plugin editable to django-simple-deploy env.
