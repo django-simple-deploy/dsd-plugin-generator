@@ -164,7 +164,7 @@ def build_new_plugin(args, plugin_config):
     for target_file in target_files:
         print(f"  Copying file: {target_file}")
         path_src = path_root / "plugin_template" / target_file
-        target_file_new = target_file.replace("plugin_pkg_name", f"{main_dir_name}")
+        target_file_new = target_file.replace("plugin_pkg_name", main_dir_name)
         path_dest = path_root_new / target_file_new
         shutil.copy(path_src, path_dest)
 
@@ -199,7 +199,7 @@ def build_new_plugin(args, plugin_config):
         for k, v in replacements.items():
             contents = contents.replace(k, v)
 
-        target_file_new = target_file.replace("plugin_pkg_name", f"{main_dir_name}")
+        target_file_new = target_file.replace("plugin_pkg_name", main_dir_name)
         target_file_new = target_file_new.replace("test_platformname_config.py", f"test_{platform_name_lower}_config.py")
         path_new = path_root_new / target_file_new
         path_new.write_text(contents)
@@ -213,7 +213,7 @@ def build_new_plugin(args, plugin_config):
     # Remove automate_all support if needed.
     if not plugin_config.support_automate_all:
         print("Commenting out support for --automate-all...")
-        path = path_root_new / f"{main_dir_name}" / "deploy_messages.py"
+        path = path_root_new / main_dir_name / "deploy_messages.py"
         lines = path.read_text().splitlines()
         new_lines = []
         for line_num, line in enumerate(lines):
@@ -245,7 +245,7 @@ def get_platform_name_lower(platform_name):
 def get_main_dir_name(pkg_name):
     """Return name of main dir. For dsd-new-platform, that's dsd_new_platform."""
     pkg_name_lower = pkg_name.lower().replace("-", "_")
-    return f"{pkg_name_lower}"
+    return pkg_name_lower
 
 
 # --- Helper functions ---
