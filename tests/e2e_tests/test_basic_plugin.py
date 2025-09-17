@@ -31,16 +31,10 @@ pytestmark = pytest.mark.skipif(
 )
 
 
-def test_simple_plugin(get_dev_env, cli_options):
-    """Test a simple plugin config."""
-    dev_env_dir, path_to_python, path_dsd = get_dev_env
-
-    plugin_config = PluginConfig(
-        platform_name = "NewFly",
-        pkg_name = "dsd-newfly",
-        support_automate_all = True,
-        license_name = "eric",
-    )
+def _generate_plugin(dev_env, plugin_config):
+    """Generate a new plugin, and install it to the django-simple-deploy dev env.
+    """
+    dev_env_dir, path_to_python, path_dsd = dev_env
 
     args = Namespace(target_dir=dev_env_dir)
     gp.generate_plugin(plugin_config, args)
@@ -53,6 +47,33 @@ def test_simple_plugin(get_dev_env, cli_options):
     cmd = f'uv pip install --python {path_to_python} -e "{path_new_plugin.as_posix()}[dev]"'
     cmd_parts = shlex.split(cmd)
     subprocess.run(cmd_parts)
+
+
+
+def test_simple_plugin(get_dev_env, cli_options):
+    """Test a simple plugin config."""
+    dev_env_dir, path_to_python, path_dsd = get_dev_env
+
+    plugin_config = PluginConfig(
+        platform_name = "NewFly",
+        pkg_name = "dsd-newfly",
+        support_automate_all = True,
+        license_name = "eric",
+    )
+
+    _generate_plugin(get_dev_env, plugin_config)
+
+    # args = Namespace(target_dir=dev_env_dir)
+    # gp.generate_plugin(plugin_config, args)
+
+    # # Make sure we have the correct path to the new plugin.
+    # path_new_plugin = dev_env_dir / "dsd-newfly"
+    # assert path_new_plugin.exists()
+
+    # # Install plugin editable to django-simple-deploy env.
+    # cmd = f'uv pip install --python {path_to_python} -e "{path_new_plugin.as_posix()}[dev]"'
+    # cmd_parts = shlex.split(cmd)
+    # subprocess.run(cmd_parts)
 
     if not cli_options.setup_plugins_only:
         e2e_utils.run_core_plugin_tests(path_dsd, plugin_config, cli_options)
