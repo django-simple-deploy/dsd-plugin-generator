@@ -19,7 +19,7 @@ def uv_available():
         return False
 
 
-def run_core_tests(path_dsd, path_to_python, cli_options):
+def run_dsd_core_tests(path_dsd, path_to_python, cli_options):
     """Run django-simple-deploy's test suite with no plugin installed."""
     tests_dir = path_dsd / "tests"
     cmd = f"{path_to_python} -m pytest {tests_dir.as_posix()}"

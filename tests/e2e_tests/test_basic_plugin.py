@@ -58,10 +58,9 @@ def get_dev_env(tmp_path_factory, cli_options):
     cmd_parts = shlex.split(cmd)
     subprocess.run(cmd_parts)
 
-    run_core_plugin_tests = True
-    if run_core_plugin_tests:
+    if not cli_options.setup_plugins_only:
         # Run core tests without a plugin installed.
-        e2e_utils.run_core_tests(path_dsd, path_to_python, cli_options)
+        e2e_utils.run_dsd_core_tests(path_dsd, path_to_python, cli_options)
 
     return tmp_path, path_to_python, path_dsd
 
@@ -89,11 +88,6 @@ def clear_plugins(get_dev_env):
 def test_simple_plugin(get_dev_env, cli_options):
     """Test a simple plugin config."""
     dev_env_dir, path_to_python, path_dsd = get_dev_env
-    # Flag to temporarily disable running dsd and plugin tests. This is helpful when
-    # examining this environment. Otherwise pytest runs so many tests, this one can't
-    # easily be found. This is not a CLI arg, because it only needs to be modified when you're
-    # working on this test, not when you're just running it.
-    run_core_plugin_tests = True
 
     plugin_config = PluginConfig(
         platform_name = "NewFly",
@@ -114,7 +108,7 @@ def test_simple_plugin(get_dev_env, cli_options):
     cmd_parts = shlex.split(cmd)
     subprocess.run(cmd_parts)
 
-    if run_core_plugin_tests:
+    if not cli_options.setup_plugins_only:
         e2e_utils.run_core_plugin_tests(path_dsd, plugin_config, cli_options)
 
 
@@ -147,7 +141,7 @@ def test_plugin_single_space_platform_name(get_dev_env, cli_options):
     cmd_parts = shlex.split(cmd)
     subprocess.run(cmd_parts)
 
-    if run_core_plugin_tests:
+    if not cli_options.setup_plugins_only:
         e2e_utils.run_core_plugin_tests(path_dsd, plugin_config, cli_options)
 
 def test_plugin_different_plugin_platform_name(get_dev_env, cli_options):
@@ -179,5 +173,5 @@ def test_plugin_different_plugin_platform_name(get_dev_env, cli_options):
     cmd_parts = shlex.split(cmd)
     subprocess.run(cmd_parts)
 
-    if run_core_plugin_tests:
+    if not cli_options.setup_plugins_only:
         e2e_utils.run_core_plugin_tests(path_dsd, plugin_config, cli_options)
