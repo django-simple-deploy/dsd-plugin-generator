@@ -68,10 +68,13 @@ def get_dev_env(tmp_path_factory, cli_options):
 def clear_plugins(get_dev_env):
     """Remove any plugins from dev env.
 
-    Most tests install a plugin to the dev env. Remove any previously-installed
-    plugins, so the plugin being tested is the only one in the env.
+    Most tests install a plugin to the dev env. Remove each plugin after its test runs.
     """
     dev_env_dir, path_to_python, path_dsd = get_dev_env
+
+    # Yield to let test function run, then clear any plugins that were installed.
+    yield
+
     cmd = f"uv pip list --python {path_to_python} --format=json"
     cmd_parts = shlex.split(cmd)
     package_dicts_str = subprocess.run(cmd_parts, capture_output=True).stdout
