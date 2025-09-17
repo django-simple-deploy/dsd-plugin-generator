@@ -27,6 +27,14 @@ from tests.e2e_tests.utils import e2e_utils
 import generate_plugin as gp
 
 
+# Skip these tests if uv is not available.
+pytestmark = pytest.mark.skipif(
+    not e2e_utils.uv_available(), reason="uv must be installed in order to run e2e tests."
+)
+
+
+# --- Fixtures ---
+
 @pytest.fixture(scope="module")
 def get_dev_env(tmp_path_factory, cli_options):
     """Set up an env where plugins can be generated and tested within django-simple-deploy.
@@ -87,7 +95,6 @@ def clear_plugins(get_dev_env):
         subprocess.run(cmd_parts)
 
 
-@pytest.mark.skipif(not e2e_utils.uv_available(), reason="uv must be installed in order to run e2e tests.")
 def test_simple_plugin(get_dev_env, cli_options):
     """Test a simple plugin config."""
     dev_env_dir, path_to_python, path_dsd = get_dev_env
