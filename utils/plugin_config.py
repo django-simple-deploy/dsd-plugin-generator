@@ -15,4 +15,4 @@ class PluginConfig:
     def validate(self):
         """Validate the plugin config."""
         assert self.platform_name
-        assert self.pkg_name
+        assert self.pkg_name.startswith("dsd-")

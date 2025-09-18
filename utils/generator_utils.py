@@ -90,7 +90,6 @@ def validate_target_dir(args, plugin_config, path_root):
             sys.exit(msg)
     else:
         # Get permission to write to target directory.
-        # path_root = Path(__file__).parent
         path_root_new = path_root.parent / plugin_config.pkg_name
 
         if path_root_new.exists():
@@ -120,8 +119,11 @@ def build_new_plugin(args, plugin_config):
     # Make sure it's okay to write to the target directory.
     path_root_new = validate_target_dir(args, plugin_config, path_root)
 
-    platform_name_lower = get_platform_name_lower(plugin_config.platform_name)
+    platform_name_lower = _get_platform_name_lower(plugin_config.platform_name)
+    main_dir_name = _get_main_dir_name(plugin_config.pkg_name)
+
     replacements = _get_replacements(plugin_config, platform_name_lower)
+
 
     # Make new plugin dir, and required directory structure.
     print(f"\nMaking new directory: {path_root_new.as_posix()}")
@@ -132,7 +134,7 @@ def build_new_plugin(args, plugin_config):
     # Using mkdir(parents=True), only need to make most deeply nested dirs.
     new_dirs = [
         "developer_resources",
-        f"dsd_{platform_name_lower}/templates",
+        f"{main_dir_name}/templates",
         "tests/integration_tests/reference_files",
         "tests/e2e_tests",
     ]
@@ -149,7 +151,7 @@ def build_new_plugin(args, plugin_config):
     target_files = [
         ".gitignore",
         "developer_resources/README.md",
-        "dsd_platformname/__init__.py",
+        "plugin_pkg_name/__init__.py",
         "tests/e2e_tests/__init__.py",
         "tests/integration_tests/reference_files/.gitignore",
         "tests/integration_tests/reference_files/Pipfile",
@@ -161,7 +163,7 @@ def build_new_plugin(args, plugin_config):
     for target_file in target_files:
         print(f"  Copying file: {target_file}")
         path_src = path_root / "plugin_template" / target_file
-        target_file_new = target_file.replace("dsd_platformname", f"dsd_{platform_name_lower}")
+        target_file_new = target_file.replace("plugin_pkg_name", main_dir_name)
         path_dest = path_root_new / target_file_new
         shutil.copy(path_src, path_dest)
 
@@ -178,12 +180,12 @@ def build_new_plugin(args, plugin_config):
         "README.md",
         "CHANGELOG.md",
         "LICENSE",
-        "dsd_platformname/platform_deployer.py",
-        "dsd_platformname/deploy.py",
-        "dsd_platformname/plugin_config.py",
-        "dsd_platformname/templates/dockerfile_example",
-        "dsd_platformname/templates/settings.py",
-        "dsd_platformname/deploy_messages.py",
+        "plugin_pkg_name/platform_deployer.py",
+        "plugin_pkg_name/deploy.py",
+        "plugin_pkg_name/plugin_config.py",
+        "plugin_pkg_name/templates/dockerfile_example",
+        "plugin_pkg_name/templates/settings.py",
+        "plugin_pkg_name/deploy_messages.py",
     ]
 
     print("\nCustomizing files...")
@@ -196,7 +198,8 @@ def build_new_plugin(args, plugin_config):
         for k, v in replacements.items():
             contents = contents.replace(k, v)
 
-        target_file_new = target_file.replace("platformname", f"{platform_name_lower}")
+        target_file_new = target_file.replace("plugin_pkg_name", main_dir_name)
+        target_file_new = target_file_new.replace("test_platformname_config.py", f"test_{platform_name_lower}_config.py")
         path_new = path_root_new / target_file_new
         path_new.write_text(contents)
 
@@ -209,7 +212,7 @@ def build_new_plugin(args, plugin_config):
     # Remove automate_all support if needed.
     if not plugin_config.support_automate_all:
         print("Commenting out support for --automate-all...")
-        path = path_root_new / f"dsd_{platform_name_lower}" / "deploy_messages.py"
+        path = path_root_new / main_dir_name / "deploy_messages.py"
         lines = path.read_text().splitlines()
         new_lines = []
         for line_num, line in enumerate(lines):
@@ -234,12 +237,17 @@ def show_summary():
     msg += "\nshould pass."
     print(msg)
 
-def get_platform_name_lower(platform_name):
+
+# --- Helper functions ---
+
+def _get_platform_name_lower(platform_name):
     """Return a lowercase version of the platform name."""
     return platform_name.lower().replace("-", "").replace("_", "").replace(".", "").replace(" ", "")
 
-
-# --- Helper functions ---
+def _get_main_dir_name(pkg_name):
+    """Return name of main dir. For dsd-new-platform, that's dsd_new_platform."""
+    pkg_name_lower = pkg_name.lower().replace("-", "_")
+    return pkg_name_lower
 
 def _get_replacements(plugin_config, platform_name_lower):
     """Get substitions for..."""
@@ -253,4 +261,3 @@ def _get_replacements(plugin_config, platform_name_lower):
     }
 
     return replacements
-
