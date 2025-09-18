@@ -10,7 +10,7 @@ import pytest
 
 import generate_plugin as gp
 from utils.plugin_config import PluginConfig
-from utils.generator_utils import get_platform_name_lower
+from utils.generator_utils import _get_platform_name_lower
 
 
 def uv_available():
@@ -56,7 +56,7 @@ def run_dsd_core_tests(path_dsd, path_to_python, cli_options):
 def run_core_plugin_tests(path_dsd, plugin_config, cli_options):
     """Run django-simple-deploy's test suite with a plugin installed."""
     tests_dir = path_dsd / "tests"
-    platform_name_lower = get_platform_name_lower(plugin_config.platform_name)
+    platform_name_lower = _get_platform_name_lower(plugin_config.platform_name)
     cmd = get_core_plugin_test_cmd(path_dsd, cli_options, platform_name_lower)
 
     output = subprocess.run(cmd, capture_output=True,shell=True)

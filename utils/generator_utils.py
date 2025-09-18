@@ -119,8 +119,8 @@ def build_new_plugin(args, plugin_config):
     # Make sure it's okay to write to the target directory.
     path_root_new = validate_target_dir(args, plugin_config, path_root)
 
-    platform_name_lower = get_platform_name_lower(plugin_config.platform_name)
-    main_dir_name = get_main_dir_name(plugin_config.pkg_name)
+    platform_name_lower = _get_platform_name_lower(plugin_config.platform_name)
+    main_dir_name = _get_main_dir_name(plugin_config.pkg_name)
 
     replacements = _get_replacements(plugin_config, platform_name_lower)
 
@@ -237,17 +237,17 @@ def show_summary():
     msg += "\nshould pass."
     print(msg)
 
-def get_platform_name_lower(platform_name):
+
+# --- Helper functions ---
+
+def _get_platform_name_lower(platform_name):
     """Return a lowercase version of the platform name."""
     return platform_name.lower().replace("-", "").replace("_", "").replace(".", "").replace(" ", "")
 
-def get_main_dir_name(pkg_name):
+def _get_main_dir_name(pkg_name):
     """Return name of main dir. For dsd-new-platform, that's dsd_new_platform."""
     pkg_name_lower = pkg_name.lower().replace("-", "_")
     return pkg_name_lower
-
-
-# --- Helper functions ---
 
 def _get_replacements(plugin_config, platform_name_lower):
     """Get substitions for..."""
@@ -261,4 +261,3 @@ def _get_replacements(plugin_config, platform_name_lower):
     }
 
     return replacements
-
