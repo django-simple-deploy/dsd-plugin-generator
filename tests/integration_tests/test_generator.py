@@ -52,6 +52,26 @@ def test_single_space_platform_name(tmp_path_factory):
     dc = dircmp(path_test_plugin, path_ref_dir, ignore=[".DS_Store", "__pycache__"])
     assert_dirs_match(dc)
 
+def test_three_part_platform_name(tmp_path_factory):
+    tmp_path = tmp_path_factory.mktemp("sample_plugin_three_part")
+    print(f"\nWriting plugin to: {tmp_path.as_posix()}")
+
+    plugin_config = PluginConfig(
+        platform_name = "Great Green Host",
+        pkg_name = "dsd-greenhost-advanced",
+        support_automate_all = True,
+        license_name = "eric",
+    )
+
+    args = Namespace(target_dir=tmp_path)
+    gp.generate_plugin(plugin_config, args)
+
+    path_ref_dir = Path(__file__).parent / "reference_files" / "dsd-greenhost-advanced"
+    path_test_plugin = tmp_path / "dsd-greenhost-advanced"
+
+    dc = dircmp(path_test_plugin, path_ref_dir, ignore=[".DS_Store", "__pycache__"])
+    assert_dirs_match(dc)
+
 def test_reject_not_start_dsd_dash(tmp_path_factory):
     """Test that a package name not starting with dsd- is rejected."""
     tmp_path = tmp_path_factory.mktemp("sample_plugin_no_space")
