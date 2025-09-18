@@ -90,7 +90,6 @@ def validate_target_dir(args, plugin_config, path_root):
             sys.exit(msg)
     else:
         # Get permission to write to target directory.
-        # path_root = Path(__file__).parent
         path_root_new = path_root.parent / plugin_config.pkg_name
 
         if path_root_new.exists():
