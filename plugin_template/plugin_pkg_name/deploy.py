@@ -7,13 +7,12 @@ Notes:
 import django_simple_deploy
 
 from {{PluginName}}.platform_deployer import PlatformDeployer
-from .plugin_config import PluginConfig
+from .plugin_config import plugin_config
 
 
 @django_simple_deploy.hookimpl
 def dsd_get_plugin_config():
     """Get platform-specific attributes needed by core."""
-    plugin_config = PluginConfig()
     return plugin_config
 
 

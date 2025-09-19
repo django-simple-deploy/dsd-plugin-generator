@@ -51,6 +51,7 @@ from django.utils.safestring import mark_safe
 import requests
 
 from . import deploy_messages as platform_msgs
+from .plugin_config import plugin_config
 
 from django_simple_deploy.management.commands.utils import plugin_utils
 from django_simple_deploy.management.commands.utils.plugin_utils import dsd_config
