@@ -16,9 +16,9 @@ class PluginCLI:
 
     def __init__(self, parser):
         """Add plugin-specific args."""
-        group_desc = "Plugin-specific CLI args for {{PACKAGE_NAME}}"
+        group_desc = "Plugin-specific CLI args for {{PackageName}}"
         plugin_group = parser.add_argument_group(
-            title="Options for {{PACKAGE_NAME}}",
+            title="Options for {{PackageName}}",
             description = group_desc,
         )
 

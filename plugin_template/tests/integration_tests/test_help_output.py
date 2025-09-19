@@ -1,4 +1,4 @@
-"""Test the help output when {{PACKAGE_NAME}} is installed.
+"""Test the help output when {{PackageName}} is installed.
 
 The core django-simple-deploy library tests its own help output.
 This test checks that plugin-specific options are included in the help output.
@@ -17,7 +17,7 @@ pytestmark = pytest.mark.skip_auto_dsd_call
 
 
 # def test_plugin_help_output(tmp_project, request):
-#     """Test that {{PACKAGE_NAME}} CLI args are included in help output.
+#     """Test that {{PackageName}} CLI args are included in help output.
 
 #     Note: When updating this, run `manage.py deploy --help` in a terminal set
 #     to 80 characters wide. That splits help text at the same places as the 

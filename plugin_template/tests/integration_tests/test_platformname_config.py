@@ -1,4 +1,4 @@
-"""Integration tests for django-simple-deploy, targeting Fly.io."""
+"""Integration tests for django-simple-deploy, targeting {{PlatformName}}."""
 
 import sys
 from pathlib import Path
