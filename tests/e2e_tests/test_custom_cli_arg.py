@@ -61,6 +61,9 @@ def test_custom_cli_arg(get_dev_env, cli_options):
     # Assert these paths all exist.
     assert all([path_cli.exists(), path_platform_deployer.exists(), path_test_custom_cli.exists(), path_test_help.exists()])
 
+    # cli.py
+    line_nums = [25, 26, 27, 28, 29, 30, 36, 37, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63]
+    uncomment_lines(path_cli, line_nums)
 
 
 
@@ -68,3 +71,22 @@ def test_custom_cli_arg(get_dev_env, cli_options):
 
     if not cli_options.setup_plugins_only:
         e2e_utils.run_core_plugin_tests(path_dsd, plugin_config, cli_options)
+
+# --- Helper functions ---
+
+def uncomment_lines(path, line_nums):
+    """Uncomment the given lines in a file.
+
+    # DEV: This function should parse a string like "25-30, 36-37, 44-63"
+    """
+    lines = path.read_text().splitlines()
+    new_lines = []
+
+    for line_num, line in enumerate(lines, start=1):
+        if line_num in line_nums:
+            new_lines.append(line.replace("# ", ""))
+        else:
+            new_lines.append(line)
+
+    new_contents = "\n".join(new_lines)
+    path.write_text(new_contents)
