@@ -10,7 +10,7 @@ Notes:
 - This makes an editable install of both django-simple-deploy and the new plugin.
 - If there are issues, you can go the test env and modify both core and the new
   plugin to troubleshoot.
-- If you want to do this, ou may need to set run_core_plugin_tests to False, otherwise
+- If you want to do this, you may need to use `--setup-plugins-only`, otherwise
   the pytest temp dir will be garbage collected because so many temp dirs are being made.
 """
 
