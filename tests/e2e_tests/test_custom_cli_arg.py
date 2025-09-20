@@ -62,8 +62,8 @@ def test_custom_cli_arg(get_dev_env, cli_options):
     assert all([path_cli.exists(), path_platform_deployer.exists(), path_test_custom_cli.exists(), path_test_help.exists()])
 
     # cli.py
-    line_nums = [25, 26, 27, 28, 29, 30, 36, 37, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63]
-    uncomment_lines(path_cli, line_nums)
+    line_num_str = "25-30, 36-37, 44-63"
+    uncomment_lines(path_cli, line_num_str)
 
 
 
@@ -74,14 +74,13 @@ def test_custom_cli_arg(get_dev_env, cli_options):
 
 # --- Helper functions ---
 
-def uncomment_lines(path, line_nums):
+def uncomment_lines(path, line_num_str):
     """Uncomment the given lines in a file.
-
-    # DEV: This function should parse a string like "25-30, 36-37, 44-63"
     """
     lines = path.read_text().splitlines()
     new_lines = []
 
+    line_nums = _get_line_nums(line_num_str)
     for line_num, line in enumerate(lines, start=1):
         if line_num in line_nums:
             new_lines.append(line.replace("# ", ""))
@@ -90,3 +89,21 @@ def uncomment_lines(path, line_nums):
 
     new_contents = "\n".join(new_lines)
     path.write_text(new_contents)
+
+
+def _get_line_nums(line_num_str):
+    """Get list of lines from a string like "25-30, 36-37, 44-63"."""
+    range_strs = line_num_str.split(",")
+
+    line_nums = []
+    for range_str in range_strs:
+        if "-" not in range_str:
+            line_nums.append(int(range_str))
+            continue
+
+        start, end = range_str.split("-")
+        start, end = int(start), int(end)
+        line_nums += list(range(start, end+1))
+
+    return line_nums
+
