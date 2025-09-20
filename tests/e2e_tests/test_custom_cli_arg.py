@@ -57,13 +57,23 @@ def test_custom_cli_arg(get_dev_env, cli_options):
     path_tests = path_plugin_dir / "tests" / "integration_tests"
     path_test_custom_cli = path_tests/ "test_custom_cli_arg.py"
     path_test_help = path_tests / "test_help_output.py"
+    path_help_reference_sample = path_tests / "reference_files" / "plugin_help_text_sample.txt"
 
     # Assert these paths all exist.
     assert all([path_cli.exists(), path_platform_deployer.exists(), path_test_custom_cli.exists(), path_test_help.exists()])
 
-    # cli.py
-    line_num_str = "25-30, 36-37, 44-63"
-    uncomment_lines(path_cli, line_num_str)
+    # Uncomment lines from relevant files.
+    uncomment_lines(path_cli, "25-30, 36-37, 44-63")
+    uncomment_lines(path_test_custom_cli, "14-22")
+    uncomment_lines(path_test_help, "19-35")
+
+    # Make a reference file for the help output.
+    path_help_reference = path_tests / "reference_files" / "plugin_help_text.txt"
+    contents = path_help_reference_sample.read_text()
+    new_contents = contents.replace("Fly.io", plugin_config.pkg_name)
+    new_contents = contents.replace("dsd-flyio", plugin_config.pkg_name)
+    path_help_reference.write_text(new_contents)
+    # DEF: Run test, fail, copy correct help output.
 
 
 
@@ -106,4 +116,3 @@ def _get_line_nums(line_num_str):
         line_nums += list(range(start, end+1))
 
     return line_nums
-
