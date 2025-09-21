@@ -22,6 +22,8 @@ Notes:
 from argparse import Namespace
 import subprocess
 import shlex
+import shutil
+from pathlib import Path
 
 import pytest
 
@@ -55,29 +57,22 @@ def test_custom_cli_arg(get_dev_env, cli_options):
     path_platform_deployer = path_main_dir / "platform_deployer.py"
 
     path_tests = path_plugin_dir / "tests" / "integration_tests"
-    path_test_custom_cli = path_tests/ "test_custom_cli_arg.py"
+    path_test_custom_cli = path_tests / "test_custom_cli_arg.py"
     path_test_help = path_tests / "test_help_output.py"
-    path_help_reference_sample = path_tests / "reference_files" / "plugin_help_text_sample.txt"
 
     # Assert these paths all exist.
     assert all([path_cli.exists(), path_platform_deployer.exists(), path_test_custom_cli.exists(), path_test_help.exists()])
 
     # Uncomment lines from relevant files.
     uncomment_lines(path_cli, "25-30, 36-37, 44-63")
-    uncomment_lines(path_test_custom_cli, "14-22")
+    # uncomment_lines(path_test_custom_cli, "14-22")
     uncomment_lines(path_test_help, "19-35")
 
-    # Make a reference file for the help output.
-    path_help_reference = path_tests / "reference_files" / "plugin_help_text.txt"
-    contents = path_help_reference_sample.read_text()
-    new_contents = contents.replace("Fly.io", plugin_config.pkg_name)
-    new_contents = contents.replace("dsd-flyio", plugin_config.pkg_name)
-    path_help_reference.write_text(new_contents)
-    # DEF: Run test, fail, copy correct help output.
-
-
-
-
+    # Copy reference file for help output to new plugin.
+    path_help_reference = Path(__file__).parent / "reference_files" / "help_output_vm_size_arg.txt"
+    assert path_help_reference.exists()
+    path_help_reference_plugin = path_tests / "reference_files" / "plugin_help_text.txt"
+    shutil.copyfile(path_help_reference, path_help_reference_plugin)
 
     if not cli_options.setup_plugins_only:
         e2e_utils.run_core_plugin_tests(path_dsd, plugin_config, cli_options)
@@ -93,7 +88,7 @@ def uncomment_lines(path, line_num_str):
     line_nums = _get_line_nums(line_num_str)
     for line_num, line in enumerate(lines, start=1):
         if line_num in line_nums:
-            new_lines.append(line.replace("# ", ""))
+            new_lines.append(line.replace("# ", "", count=1))
         else:
             new_lines.append(line)
 

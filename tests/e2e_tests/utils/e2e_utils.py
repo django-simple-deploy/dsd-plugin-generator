@@ -75,7 +75,7 @@ def get_core_plugin_test_cmd(path_dsd, cli_options, platform_name_lower):
         cmd = f"cd {path_dsd.as_posix()} && source .venv/bin/activate && pytest"
     else:
         # Only run the new plugin's integration tests.
-        cmd = f"cd {path_dsd.as_posix()} && source .venv/bin/activate && pytest -k {test_filename}"
+        cmd = f"cd {path_dsd.as_posix()} && source .venv/bin/activate && pytest -k {test_filename} -k test_help_output.py"
 
     return cmd
 
