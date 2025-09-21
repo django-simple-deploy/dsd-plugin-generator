@@ -153,11 +153,13 @@ def build_new_plugin(args, plugin_config):
         "developer_resources/README.md",
         "plugin_pkg_name/__init__.py",
         "tests/e2e_tests/__init__.py",
+        "tests/integration_tests/test_custom_cli_arg.py",
         "tests/integration_tests/reference_files/.gitignore",
         "tests/integration_tests/reference_files/Pipfile",
         "tests/integration_tests/reference_files/pyproject.toml",
         "tests/integration_tests/reference_files/requirements.txt",
         "tests/integration_tests/reference_files/settings.py",
+        "tests/integration_tests/reference_files/plugin_help_text_sample.txt",
     ]
 
     for target_file in target_files:
@@ -174,6 +176,7 @@ def build_new_plugin(args, plugin_config):
         "pyproject.toml",
         "tests/conftest.py",
         "tests/integration_tests/test_platformname_config.py",
+         "tests/integration_tests/test_help_output.py",
         "tests/e2e_tests/utils.py",
         "tests/e2e_tests/test_deployment.py",
         "MANIFEST.in",
@@ -181,6 +184,7 @@ def build_new_plugin(args, plugin_config):
         "CHANGELOG.md",
         "LICENSE",
         "plugin_pkg_name/platform_deployer.py",
+        "plugin_pkg_name/cli.py",
         "plugin_pkg_name/deploy.py",
         "plugin_pkg_name/plugin_config.py",
         "plugin_pkg_name/templates/dockerfile_example",

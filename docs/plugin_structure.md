@@ -34,6 +34,7 @@ dsd-greenhost-high-traffic
 │   └── README.md
 ├── dsd_greenhost_high_traffic
 │   ├── __init__.py
+│   ├── cli.py
 │   ├── deploy.py
 │   ├── deploy_messages.py
 │   ├── platform_deployer.py
@@ -50,9 +51,11 @@ dsd-greenhost-high-traffic
     │   └── utils.py
     └── integration_tests
         ├── reference_files
-        └── test_greenhost_config.py
+        ├── test_custom_cli_arg.py
+        ├── test_greenhost_config.py
+        └── test_help_output.py
 
-8 directories, 18 files
+8 directories, 21 files
 ```
 
 Notes

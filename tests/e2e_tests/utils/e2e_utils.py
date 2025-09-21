@@ -61,8 +61,9 @@ def run_core_plugin_tests(path_dsd, plugin_config, cli_options):
 
     output = subprocess.run(cmd, capture_output=True,shell=True)
     stdout = output.stdout.decode()
+    print(stdout)
 
-    assert "[100%]" in stdout
+    assert "FAILED" not in stdout
     check_core_plugin_tests(stdout, cli_options)
 
 
@@ -75,7 +76,7 @@ def get_core_plugin_test_cmd(path_dsd, cli_options, platform_name_lower):
         cmd = f"cd {path_dsd.as_posix()} && source .venv/bin/activate && pytest"
     else:
         # Only run the new plugin's integration tests.
-        cmd = f"cd {path_dsd.as_posix()} && source .venv/bin/activate && pytest -k {test_filename}"
+        cmd = f"cd {path_dsd.as_posix()} && source .venv/bin/activate && pytest -k {test_filename} -k test_help_output.py -k test_custom_cli_arg.py"
 
     return cmd
 

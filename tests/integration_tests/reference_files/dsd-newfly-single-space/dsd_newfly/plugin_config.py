@@ -25,3 +25,8 @@ class PluginConfig:
         self.automate_all_supported = True
         self.confirm_automate_all_msg = platform_msgs.confirm_automate_all
         self.platform_name = "New Fly"
+
+
+# Create plugin_config once right here. This approach keeps from having to pass the config
+# instance between core, plugins, and these utility functions.
+plugin_config = PluginConfig()

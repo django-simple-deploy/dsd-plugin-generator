@@ -1,0 +1,139 @@
+"""Test a plugin that uses a custom CLI arg.
+
+Some of the code that supports a custom CLI is commented out in the generated plugin.
+So, we need to uncomment that code, then run the tests.
+
+This test:
+- Generates a new plugin.
+- Modifies the generated files to enable a custom CLI arg.
+- Modifies platform_deployer.py to use the custom CLI arg in a testable way.
+- Sets up a development environment for django-simple-deploy core.
+- Installs the new plugin to the development environment.
+- Runs the plugin's integration tests, using a `deploy` call that includes the custom CLI arg.
+
+Notes:
+- This makes an editable install of both django-simple-deploy and the new plugin.
+- If there are issues, you can go the test env and modify both core and the new
+  plugin to troubleshoot.
+- If you want to do this, you may need to use `--setup-plugins-only`, otherwise
+  the pytest temp dir will be garbage collected because so many temp dirs are being made.
+"""
+
+from argparse import Namespace
+import subprocess
+import shlex
+import shutil
+from pathlib import Path
+
+import pytest
+
+from utils.plugin_config import PluginConfig
+from tests.e2e_tests.utils import e2e_utils
+
+
+# Skip these tests if uv is not available.
+pytestmark = pytest.mark.skipif(
+    not e2e_utils.uv_available(), reason="uv must be installed in order to run e2e tests."
+)
+
+
+def test_custom_cli_arg(get_dev_env, cli_options):
+    """Test a simple plugin config."""
+    dev_env_dir, path_to_python, path_dsd = get_dev_env
+
+    plugin_config = PluginConfig(
+        platform_name = "NewFly",
+        pkg_name = "dsd-newfly",
+        support_automate_all = True,
+        license_name = "eric",
+    )
+    e2e_utils.generate_plugin(get_dev_env, plugin_config)
+
+    msg = "\n*** Modifying plugin code to use the custom CLI arg that's commented out by default. ***\n"
+    print(msg)
+
+    # Uncomment CLI-related code.
+    path_plugin_dir = dev_env_dir / plugin_config.pkg_name
+    path_main_dir = path_plugin_dir / plugin_config.pkg_name.replace("-", "_")
+
+    path_cli = path_main_dir / "cli.py"
+    path_platform_deployer = path_main_dir / "platform_deployer.py"
+
+    path_tests = path_plugin_dir / "tests" / "integration_tests"
+    path_test_custom_cli = path_tests / "test_custom_cli_arg.py"
+    path_test_help = path_tests / "test_help_output.py"
+
+    # Assert these paths all exist.
+    assert all([path_cli.exists(), path_platform_deployer.exists(), path_test_custom_cli.exists(), path_test_help.exists()])
+
+    # Uncomment lines from relevant files.
+    uncomment_lines(path_cli, "25-30, 36-37, 44-63")
+    uncomment_lines(path_test_custom_cli, "14-22")
+    uncomment_lines(path_test_help, "19-35")
+
+    # Copy reference file for help output to new plugin.
+    path_help_reference = Path(__file__).parent / "reference_files" / "help_output_vm_size_arg.txt"
+    path_help_reference_plugin = path_tests / "reference_files" / "plugin_help_text.txt"
+    shutil.copyfile(path_help_reference, path_help_reference_plugin)
+
+    # Modify plugin's platform_deployer.py file to pass the uncommented test_custom_cli_arg.py file.
+    _write_add_fly_toml(path_platform_deployer)
+
+    if not cli_options.setup_plugins_only:
+        e2e_utils.run_core_plugin_tests(path_dsd, plugin_config, cli_options)
+
+# --- Helper functions ---
+
+def uncomment_lines(path, line_num_str):
+    """Uncomment the given lines in a file.
+    """
+    lines = path.read_text().splitlines()
+    new_lines = []
+
+    line_nums = _get_line_nums(line_num_str)
+    for line_num, line in enumerate(lines, start=1):
+        if line_num in line_nums:
+            new_lines.append(line.replace("# ", "", count=1))
+        else:
+            new_lines.append(line)
+
+    new_contents = "\n".join(new_lines)
+    path.write_text(new_contents)
+
+
+def _get_line_nums(line_num_str):
+    """Get list of lines from a string like "25-30, 36-37, 44-63"."""
+    range_strs = line_num_str.split(",")
+
+    line_nums = []
+    for range_str in range_strs:
+        if "-" not in range_str:
+            line_nums.append(int(range_str))
+            continue
+
+        start, end = range_str.split("-")
+        start, end = int(start), int(end)
+        line_nums += list(range(start, end+1))
+
+    return line_nums
+
+
+def _write_add_fly_toml(path_platform_deployer):
+    """Add code to platform_deployer that writes a fly.toml file to pass test_custom_cli_arg.py."""
+    target_string = "# Configure project for deployment to NewFly"
+
+    lines = path_platform_deployer.read_text().splitlines()
+
+    new_lines = []
+    for line in lines:
+        if target_string not in line:
+            new_lines.append(line)
+            continue
+
+        # This only runs once in the loop.
+        path_fly_toml_block = Path(__file__).parent / "reference_files" / "add_fly_toml.py"
+        fly_toml_lines = path_fly_toml_block.read_text().splitlines()
+        new_lines += fly_toml_lines
+
+    new_contents = "\n".join(new_lines)
+    path_platform_deployer.write_text(new_contents)
