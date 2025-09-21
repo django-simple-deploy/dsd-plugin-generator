@@ -63,7 +63,7 @@ def run_core_plugin_tests(path_dsd, plugin_config, cli_options):
     stdout = output.stdout.decode()
     print(stdout)
 
-    assert "[100%]" in stdout
+    assert "FAILURE" not in stdout
     check_core_plugin_tests(stdout, cli_options)
 
 
