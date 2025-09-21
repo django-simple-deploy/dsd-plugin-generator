@@ -68,14 +68,16 @@ def test_custom_cli_arg(get_dev_env, cli_options):
 
     # Uncomment lines from relevant files.
     uncomment_lines(path_cli, "25-30, 36-37, 44-63")
-    # uncomment_lines(path_test_custom_cli, "14-22")
+    uncomment_lines(path_test_custom_cli, "14-22")
     uncomment_lines(path_test_help, "19-35")
 
     # Copy reference file for help output to new plugin.
     path_help_reference = Path(__file__).parent / "reference_files" / "help_output_vm_size_arg.txt"
-    assert path_help_reference.exists()
     path_help_reference_plugin = path_tests / "reference_files" / "plugin_help_text.txt"
     shutil.copyfile(path_help_reference, path_help_reference_plugin)
+
+    # Modify plugin's platform_deployer.py file to pass the uncommented test_custom_cli_arg.py file.
+    _write_add_fly_toml(path_platform_deployer)
 
     if not cli_options.setup_plugins_only:
         e2e_utils.run_core_plugin_tests(path_dsd, plugin_config, cli_options)
@@ -114,3 +116,24 @@ def _get_line_nums(line_num_str):
         line_nums += list(range(start, end+1))
 
     return line_nums
+
+
+def _write_add_fly_toml(path_platform_deployer):
+    """Add code to platform_deployer that writes a fly.toml file to pass test_custom_cli_arg.py."""
+    target_string = "# Configure project for deployment to NewFly"
+
+    lines = path_platform_deployer.read_text().splitlines()
+
+    new_lines = []
+    for line in lines:
+        if target_string not in line:
+            new_lines.append(line)
+            continue
+
+        # This only runs once in the loop.
+        path_fly_toml_block = Path(__file__).parent / "reference_files" / "add_fly_toml.py"
+        fly_toml_lines = path_fly_toml_block.read_text().splitlines()
+        new_lines += fly_toml_lines
+
+    new_contents = "\n".join(new_lines)
+    path_platform_deployer.write_text(new_contents)
