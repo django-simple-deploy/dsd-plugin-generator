@@ -75,3 +75,10 @@ test_newplatform_config.py ..................    [100%]
 This is really helpful for maintaining the test suite, and for development work.
 
 **Note:** This can get a little flaky, because we're working in a temp environment that pytest will destroy when more resources are created. If you want to keep working with these resources, you can copy the entire `e2e_new_plugin_test0` directory to a more stable location. You'll have to rebuild the `django-simple-deploy/.venv` environment, but you'll have a useful, stable development environment to work with. You'll be able to run any tests you want from that environment.
+
+Testing custom plugin CLI args
+---
+
+A plugin can extend the core django-simple-deploy CLI by defining its own custom CLI args. The code for doing this is included in the generated plugin, but code that would actually define a custom CLI arg is commented out.
+
+The e2e test suite for this plugin generator includes `e2e_tests/test_plugin_cli.py`. This test uncomments the relevant code from a generated plugin. It inserts a block of code that uses the custom CLI arg in a `deploy` call, and asserts that the expected custom behavior works successfully. It also tests that `manage.py deploy --help` includes output documenting usage of the custom CLI arg.
