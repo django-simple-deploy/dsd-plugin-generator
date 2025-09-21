@@ -61,6 +61,7 @@ def run_core_plugin_tests(path_dsd, plugin_config, cli_options):
 
     output = subprocess.run(cmd, capture_output=True,shell=True)
     stdout = output.stdout.decode()
+    print(stdout)
 
     assert "[100%]" in stdout
     check_core_plugin_tests(stdout, cli_options)
