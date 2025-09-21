@@ -10,6 +10,23 @@ Versions are informal at this point, since this is not released as a package. Ve
 
 This series corresponds to 1.x releases of django-simple-deploy.
 
+### 1.3.0
+
+#### External changes
+
+- Adds supoort for custom CLI args in the generated plugin. Code that would actually implement a custom arg is commented out, but it should be relatively straightforward for plugin authors to use this code to extend the core CLI.
+
+#### Internal changes
+
+- Instantiate plugin_config in plugin_config.py.
+- Adds infrastructure for supporting custom CLI args: cli.py, hook impls.
+- Updated integration test reference files to reflect this new plugin structure.
+- E2e tests exercise a custom CLI arg by uncommenting code from the generated plugin.
+- E2e tests verify that custom CLI arg help is included in the main --help output.
+- Prints output of tests run in a subprocess.
+- Checks for `FAILED` in output, not `100%`.
+- Updated docs.
+
 ### 1.1.0
 
 #### External changes
