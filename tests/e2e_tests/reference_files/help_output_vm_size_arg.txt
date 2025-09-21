@@ -1,5 +1,5 @@
 Options for dsd-newfly:
   Plugin-specific CLI args for dsd-newfly
 
-  --vm-size BUGGER     Name for a preset vm-size configuration, ie `shared-
+  --vm-size VM_SIZE     Name for a preset vm-size configuration, ie `shared-
                         cpu-2x`.
