@@ -49,6 +49,9 @@ def test_custom_cli_arg(get_dev_env, cli_options):
     )
     e2e_utils.generate_plugin(get_dev_env, plugin_config)
 
+    msg = "\n*** Modifying plugin code to use the custom CLI arg that's commented out by default. ***\n"
+    print(msg)
+
     # Uncomment CLI-related code.
     path_plugin_dir = dev_env_dir / plugin_config.pkg_name
     path_main_dir = path_plugin_dir / plugin_config.pkg_name.replace("-", "_")
