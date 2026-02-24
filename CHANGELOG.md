@@ -10,6 +10,12 @@ Versions are informal at this point, since this is not released as a package. Ve
 
 This series corresponds to 1.x releases of django-simple-deploy.
 
+### 1.4.0
+
+#### External changes
+
+- Fix path from `simple_deploy_logs/` to `dsd_logs/` in e2e test utils.
+
 ### 1.3.0
 
 #### External changes
